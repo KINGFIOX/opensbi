@@ -1,5 +1,6 @@
 # ignore anything begin with dot
 .*
+!.envrc
 
 # exceptions we need even begin with dot
 !.clang-format
