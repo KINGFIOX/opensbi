@@ -452,9 +452,7 @@ const void *fdt_getprop_namelen(const void *fdt, int nodeoffset,
 				const char *name, int namelen, int *lenp)
 {
 	int poffset;
-	const struct fdt_property *prop;
-
-	prop = fdt_get_property_namelen_(fdt, nodeoffset, name, namelen, lenp,
+	const struct fdt_property *	prop = fdt_get_property_namelen_(fdt, nodeoffset, name, namelen, lenp,
 					 &poffset);
 	if (!prop)
 		return NULL;
@@ -705,13 +703,12 @@ int fdt_node_offset_by_phandle(const void *fdt, uint32_t phandle)
 
 int fdt_stringlist_contains(const char *strlist, int listlen, const char *str)
 {
-	int len = strlen(str);
-	const char *p;
+	const int len = strlen(str);
 
 	while (listlen >= len) {
 		if (memcmp(str, strlist, len+1) == 0)
 			return 1;
-		p = memchr(strlist, '\0', listlen);
+	const char *p = memchr(strlist, '\0', listlen);
 		if (!p)
 			return 0; /* malformed strlist.. */
 		listlen -= (p-strlist) + 1;
@@ -823,10 +820,8 @@ const char *fdt_stringlist_get(const void *fdt, int nodeoffset,
 int fdt_node_check_compatible(const void *fdt, int nodeoffset,
 			      const char *compatible)
 {
-	const void *prop;
 	int len;
-
-	prop = fdt_getprop(fdt, nodeoffset, "compatible", &len);
+	const void *prop = fdt_getprop(fdt, nodeoffset, "compatible", &len);
 	if (!prop)
 		return len;
 

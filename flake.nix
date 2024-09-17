@@ -22,10 +22,9 @@
             (with pkgsCross.riscv64; [ buildPackages.gcc buildPackages.gdb ])
             qemu
           ];
-          MAKEFLAGS = "-j$(nproc)";
+          MAKEFLAGS = "-j$(nproc) DEBUG=1";
           PATH = "${pkgs.pkgsCross.riscv64.buildPackages.gcc}/bin:$PATH";
           CROSS_COMPILE = "riscv64-unknown-linux-gnu-";
-          DEBUG = 1;
           PLATFORM = "generic";
           PLATFORM_RISCV_XLEN = 64;
         };

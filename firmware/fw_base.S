@@ -39,7 +39,7 @@
 _start:
 	/*                                     Find preferred boot HART id */
 	MOV_3R                                 s0, a0, s1, a1, s2, a2
-	call                                   fw_boot_hart                                                              # this defined in fw_dynamic, fw_jump, fw_payload
+	call                                   fw_boot_hart                                                                     # this defined in fw_dynamic, fw_jump, fw_payload
 # fw_payload: li a0, -1
 	mv                                     a6, a0
 	MOV_3R                                 a0, s0, a1, s1, a2, s2
@@ -50,14 +50,14 @@ _start:
 _try_lottery:
 	/*                                     Jump to relocation wait loop if we don't get relocation lottery */
 	lla                                    a6, _boot_status
-	li                                     a7, BOOT_STATUS_LOTTERY_DONE                                              # 这是一个标志位
+	li                                     a7, BOOT_STATUS_LOTTERY_DONE                                                     # 这是一个标志位
 	amoswap.w                              a6, a7, (a6)
 	bnez                                   a6, _wait_for_boot_hart
 
 # 只有一个核心能进来
 	/*                                     relocate the global table content */
-	li                                     t0, FW_TEXT_START /* link start */
-	lla                                    t1, _fw_start /* load start, defined in linker */
+	li                                     t0, FW_TEXT_START /* link start */ // compile time address of opensbi, default 0
+	lla                                    t1, _fw_start /* load start, defined in linker */ // 一般情况下也是 0
 	sub                                    t2, t1, t0 /* load offset */
 	lla                                    t0, __rel_dyn_start
 	lla                                    t1, __rel_dyn_end
@@ -93,21 +93,21 @@ _bss_zero:
 
 	/*                                     Setup temporary trap handler */
 	lla                                    s4, _start_hang
-	csrw                                   CSR_MTVEC, s4                                                             # 看来当前是运行在 m-mode
+	csrw                                   CSR_MTVEC, s4                                                                    # 看来当前是运行在 m-mode
 
 	/*                                     Setup temporary stack */
-	lla                                    s4, _fw_end                                                               # 栈空间是: _fw_end 之后的部分
+	lla                                    s4, _fw_end                                                                      # 栈空间是: _fw_end 之后的部分
 	li                                     s5, (SBI_SCRATCH_SIZE * 2)
 	add                                    sp, s4, s5
 
 	/*                                     Allow main firmware to save info */
 	MOV_5R                                 s0, a0, s1, a1, s2, a2, s3, a3, s4, a4
-	call                                   fw_save_info                                                              # 这个被定义在 fw_dynamic, fw_jump, fw_payload 中
+	call                                   fw_save_info                                                                     # 这个被定义在 fw_dynamic, fw_jump, fw_payload 中
 	MOV_5R                                 a0, s0, a1, s1, a2, s2, a3, s3, a4, s4
 
 #ifdef FW_FDT_PATH
 	/*                                     Override previous arg1 */
-	lla                                    a1, fw_fdt_bin                                                            # 这个是静态的 ?, 这里应该是 override 吧, 按道理来说, a1 是 qemu 传入的 dtb
+	lla                                    a1, fw_fdt_bin                                                                   # 这个是静态的 ?, 这里应该是 override 吧, 按道理来说, a1 是 qemu 传入的 dtb
 #endif
 
 	/*
@@ -118,9 +118,9 @@ _bss_zero:
 	*/
 	MOV_5R                                 s0, a0, s1, a1, s2, a2, s3, a3, s4, a4
 	call                                   fw_platform_init
-	mv                                     t0, a0
+	mv                                     t0, a0                                                                           # *fdt
 	MOV_5R                                 a0, s0, a1, s1, a2, s2, a3, s3, a4, s4
-	mv                                     a1, t0                                                                    # a1 = fw_platform_init's ret
+	mv                                     a1, t0                                                                           # a1 = fw_platform_init's ret
 
 	/*                                     Preload HART details
 	*                                      s7 -> HART Count
@@ -128,11 +128,11 @@ _bss_zero:
 	*                                      s9 -> Heap Size
 	*                                      s10 -> Heap Offset
 	*/
-	lla                                    a4, platform
+	lla                                    a4, platform                                                                     # 0x80080998
 #if __riscv_xlen > 32
-	lwu                                    s7, SBI_PLATFORM_HART_COUNT_OFFSET(a4)
-	lwu                                    s8, SBI_PLATFORM_HART_STACK_SIZE_OFFSET(a4)
-	lwu                                    s9, SBI_PLATFORM_HEAP_SIZE_OFFSET(a4)
+	lwu                                    s7, SBI_PLATFORM_HART_COUNT_OFFSET(a4)                                           # 1
+	lwu                                    s8, SBI_PLATFORM_HART_STACK_SIZE_OFFSET(a4)                                      # 0x2000
+	lwu                                    s9, SBI_PLATFORM_HEAP_SIZE_OFFSET(a4)                                            # 0x8c00
 #else
 	lw                                     s7, SBI_PLATFORM_HART_COUNT_OFFSET(a4)
 	lw                                     s8, SBI_PLATFORM_HART_STACK_SIZE_OFFSET(a4)
@@ -140,9 +140,9 @@ _bss_zero:
 #endif
 
 	/*                                     Setup scratch space for all the HARTs*/
-	lla                                    tp, _fw_end
-	mul                                    a5, s7, s8
-	add                                    tp, tp, a5
+	lla                                    tp, _fw_end                                                                      # base
+	mul                                    a5, s7, s8                                                                       # cnt * stack_size
+	add                                    tp, tp, a5                                                                       # base + cnt * stack_size
 	/*                                     Setup heap base address */
 	lla                                    s10, _fw_start
 	sub                                    s10, tp, s10
@@ -199,7 +199,7 @@ _scratch_init:
 	MOV_3R                                 a0, s0, a1, s1, a2, s2
 	/*                                     Store next mode in scratch space */
 	MOV_3R                                 s0, a0, s1, a1, s2, a2
-	call                                   fw_next_mode                                                              # m-mode 下一个 mode 就是 s-mode = 1
+	call                                   fw_next_mode                                                                     # m-mode 下一个 mode 就是 s-mode = 1
 	REG_S                                  a0, SBI_SCRATCH_NEXT_MODE_OFFSET(tp)
 	MOV_3R                                 a0, s0, a1, s1, a2, s2
 	/*                                     Store warm_boot address in scratch space */
@@ -219,7 +219,7 @@ _scratch_init:
 #ifdef FW_OPTIONS
 	li                                     a0, FW_OPTIONS
 #else
-	call                                   fw_options
+	call                                   fw_options                                                                       # 这个实际上也是 def a0
 #endif
 	REG_S                                  a0, SBI_SCRATCH_OPTIONS_OFFSET(tp)
 	MOV_3R                                 a0, s0, a1, s1, a2, s2
@@ -332,7 +332,7 @@ _start_warm:
 	csrr                                   s6, CSR_MHARTID
 
 	/*                                     Find HART index */
-	beqz                                   s9, 3f
+	beqz                                   s9, 3f                                                                           # goto 3:
 	li                                     a4, 0
 1:
 #if __riscv_xlen > 32
@@ -422,7 +422,7 @@ _start_hang:
 
 	.section                               .entry, "ax", %progbits
 	.align                                 3
-	.weak                                  fw_platform_init
+	.weak                                  fw_platform_init                                                                 # 这个是弱符号了, 但是我们用 C 语言定义了一个 强符号
 fw_platform_init:
 	mv                                     a0, a1
 	ret

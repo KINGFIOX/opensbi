@@ -668,7 +668,7 @@ endif
 
 .PHONY: gdbclient
 gdbclient: all
-	riscv64-unknown-linux-gnu-gdb -ex 'target remote localhost:1234' -ex 'file ./build/platform/generic/firmware/fw_payload.elf'
+	riscv64-unknown-linux-gnu-gdb -ex 'file ./build/platform/generic/firmware/fw_payload.elf' -ex 'target remote localhost:1234'
 
 install_targets-y  = install_libsbi
 ifdef PLATFORM

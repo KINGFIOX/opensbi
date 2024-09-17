@@ -34,24 +34,22 @@ extern const struct platform_override *platform_override_modules[];
 extern unsigned long platform_override_modules_size;
 
 static const struct platform_override *generic_plat = NULL;
-static const struct fdt_match *generic_plat_match = NULL;
+static const struct fdt_match *generic_plat_match   = NULL;
 
 static void fw_platform_lookup_special(const void *fdt, int root_offset)
 {
-	const struct platform_override *plat;
-	const struct fdt_match *match;
-	int pos;
-
-	for (pos = 0; pos < platform_override_modules_size; pos++) {
-		plat = platform_override_modules[pos];
+	for (int pos = 0; pos < platform_override_modules_size; pos++) {
+		const struct platform_override *plat =
+			platform_override_modules[pos];
 		if (!plat->match_table)
 			continue;
 
-		match = fdt_match_node(fdt, root_offset, plat->match_table);
+		const struct fdt_match *match =
+			fdt_match_node(fdt, root_offset, plat->match_table);
 		if (!match)
 			continue;
 
-		generic_plat = plat;
+		generic_plat	   = plat;
 		generic_plat_match = match;
 		break;
 	}
@@ -70,7 +68,7 @@ static u32 fw_platform_calculate_heap_size(u32 hart_count)
 }
 
 extern struct sbi_platform platform;
-static bool platform_has_mlevel_imsic = false;
+static bool platform_has_mlevel_imsic			= false;
 static u32 generic_hart_index2id[SBI_HARTMASK_MAX_BITS] = { 0 };
 
 static DECLARE_BITMAP(generic_coldboot_harts, SBI_HARTMASK_MAX_BITS);
@@ -93,7 +91,8 @@ static void fw_platform_coldboot_harts_init(const void *fdt)
 	if (chosen_offset < 0)
 		goto default_config;
 
-	config_offset = fdt_node_offset_by_compatible(fdt, chosen_offset, "opensbi,config");
+	config_offset = fdt_node_offset_by_compatible(fdt, chosen_offset,
+						      "opensbi,config");
 	if (config_offset < 0)
 		goto default_config;
 
@@ -103,8 +102,8 @@ static void fw_platform_coldboot_harts_init(const void *fdt)
 
 	len = len / sizeof(u32);
 	for (int i = 0; i < len; i++) {
-		cpu_offset = fdt_node_offset_by_phandle(fdt,
-						fdt32_to_cpu(val[i]));
+		cpu_offset =
+			fdt_node_offset_by_phandle(fdt, fdt32_to_cpu(val[i]));
 		if (cpu_offset < 0)
 			goto default_config;
 
@@ -141,16 +140,18 @@ default_config:
  * FDT is unchanged (or FDT is modified in-place) then fw_platform_init()
  * can always return the original FDT location (i.e. 'arg1') unmodified.
  */
-unsigned long fw_platform_init(unsigned long arg0, unsigned long arg1,
-				unsigned long arg2, unsigned long arg3,
-				unsigned long arg4)
+unsigned long
+fw_platform_init(unsigned long __attribute__((unused)) arg0 /* 0 hart id */,
+		 unsigned long arg1 /* $fdt */,
+		 unsigned long __attribute__((unused)) arg2 /* 0x1028  */,
+		 unsigned long __attribute__((unused)) arg3 /* 0 */,
+		 unsigned long __attribute__((unused)) arg4 /* 0 */)
 {
-	const char *model;
-	const void *fdt = (void *)arg1;
 	u32 hartid, hart_count = 0;
 	int rc, root_offset, cpus_offset, cpu_offset, len;
 
-	root_offset = fdt_path_offset(fdt, "/");
+	const void *fdt = (void *)arg1; // fdt
+	root_offset	= fdt_path_offset(fdt, "/");
 	if (root_offset < 0)
 		goto fail;
 
@@ -159,7 +160,7 @@ unsigned long fw_platform_init(unsigned long arg0, unsigned long arg1,
 	if (generic_plat && generic_plat->fw_init)
 		generic_plat->fw_init(fdt, generic_plat_match);
 
-	model = fdt_getprop(fdt, root_offset, "model", &len);
+	const char *model = fdt_getprop(fdt, root_offset, "model", &len);
 	if (model)
 		sbi_strncpy(platform.name, model, sizeof(platform.name) - 1);
 
@@ -170,7 +171,8 @@ unsigned long fw_platform_init(unsigned long arg0, unsigned long arg1,
 	if (cpus_offset < 0)
 		goto fail;
 
-	fdt_for_each_subnode(cpu_offset, fdt, cpus_offset) {
+	fdt_for_each_subnode(cpu_offset, fdt, cpus_offset)
+	{
 		rc = fdt_parse_hart_id(fdt, cpu_offset, &hartid);
 		if (rc)
 			continue;
@@ -184,8 +186,8 @@ unsigned long fw_platform_init(unsigned long arg0, unsigned long arg1,
 		generic_hart_index2id[hart_count++] = hartid;
 	}
 
-	platform.hart_count = hart_count;
-	platform.heap_size = fw_platform_calculate_heap_size(hart_count);
+	platform.hart_count	  = hart_count;
+	platform.heap_size	  = fw_platform_calculate_heap_size(hart_count);
 	platform_has_mlevel_imsic = fdt_check_imsic_mlevel(fdt);
 
 	fw_platform_coldboot_harts_init(fdt);
@@ -201,8 +203,8 @@ fail:
 static bool generic_cold_boot_allowed(u32 hartid)
 {
 	if (generic_plat && generic_plat->cold_boot_allowed)
-		return generic_plat->cold_boot_allowed(
-						hartid, generic_plat_match);
+		return generic_plat->cold_boot_allowed(hartid,
+						       generic_plat_match);
 
 	for (int i = 0; i < platform.hart_count; i++) {
 		if (hartid == generic_hart_index2id[i])
@@ -247,7 +249,8 @@ static int generic_final_init(bool cold_boot)
 	int rc;
 
 	if (generic_plat && generic_plat->final_init) {
-		rc = generic_plat->final_init(cold_boot, fdt, generic_plat_match);
+		rc = generic_plat->final_init(cold_boot, fdt,
+					      generic_plat_match);
 		if (rc)
 			return rc;
 	}
@@ -270,12 +273,11 @@ static int generic_final_init(bool cold_boot)
 
 static bool generic_vendor_ext_check(void)
 {
-	return (generic_plat && generic_plat->vendor_ext_provider) ?
-		true : false;
+	return (generic_plat && generic_plat->vendor_ext_provider) ? true
+								   : false;
 }
 
-static int generic_vendor_ext_provider(long funcid,
-				       struct sbi_trap_regs *regs,
+static int generic_vendor_ext_provider(long funcid, struct sbi_trap_regs *regs,
 				       struct sbi_ecall_return *out)
 {
 	return generic_plat->vendor_ext_provider(funcid, regs, out,
@@ -411,15 +413,15 @@ const struct sbi_platform_operations platform_ops = {
 };
 
 struct sbi_platform platform = {
-	.opensbi_version	= OPENSBI_VERSION,
-	.platform_version	=
+	.opensbi_version = OPENSBI_VERSION,
+	.platform_version =
 		SBI_PLATFORM_VERSION(CONFIG_PLATFORM_GENERIC_MAJOR_VER,
 				     CONFIG_PLATFORM_GENERIC_MINOR_VER),
-	.name			= CONFIG_PLATFORM_GENERIC_NAME,
-	.features		= SBI_PLATFORM_DEFAULT_FEATURES,
-	.hart_count		= SBI_HARTMASK_MAX_BITS,
-	.hart_index2id		= generic_hart_index2id,
-	.hart_stack_size	= SBI_PLATFORM_DEFAULT_HART_STACK_SIZE,
-	.heap_size		= SBI_PLATFORM_DEFAULT_HEAP_SIZE(0),
-	.platform_ops_addr	= (unsigned long)&platform_ops
+	.name		   = CONFIG_PLATFORM_GENERIC_NAME,
+	.features	   = SBI_PLATFORM_DEFAULT_FEATURES,
+	.hart_count	   = SBI_HARTMASK_MAX_BITS,
+	.hart_index2id	   = generic_hart_index2id,
+	.hart_stack_size   = SBI_PLATFORM_DEFAULT_HART_STACK_SIZE,
+	.heap_size	   = SBI_PLATFORM_DEFAULT_HEAP_SIZE(0),
+	.platform_ops_addr = (unsigned long)&platform_ops
 };
