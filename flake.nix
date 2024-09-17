@@ -19,13 +19,15 @@
             llvm_16
             libxml2
             cargo-binutils
-            (with pkgsCross.riscv64-embedded; [
-              buildPackages.gcc
-              buildPackages.gdb
-            ])
+            (with pkgsCross.riscv64; [ buildPackages.gcc buildPackages.gdb ])
             qemu
           ];
           MAKEFLAGS = "-j$(nproc)";
+          PATH = "${pkgs.pkgsCross.riscv64.buildPackages.gcc}/bin:$PATH";
+          CROSS_COMPILE = "riscv64-unknown-linux-gnu-";
+          DEBUG = 1;
+          PLATFORM = "generic";
+          PLATFORM_RISCV_XLEN = 64;
         };
       });
 }

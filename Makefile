@@ -651,6 +651,25 @@ else
 endif
 endif
 
+#
+.PHONY: gdbserver
+gdbserver: all
+ifneq ($(platform-runcmd),)
+	$(platform-runcmd) $(RUN_ARGS) -S -s -smp 1
+else
+ifdef PLATFORM
+	@echo "Platform $(PLATFORM) doesn't specify a run command"
+	@false
+else
+	@echo Run command only available when targeting a platform
+	@false
+endif
+endif
+
+.PHONY: gdbclient
+gdbclient: all
+	riscv64-unknown-linux-gnu-gdb -ex 'target remote localhost:1234' -ex 'file ./build/platform/generic/firmware/fw_payload.elf'
+
 install_targets-y  = install_libsbi
 ifdef PLATFORM
 install_targets-y += install_libplatsbi

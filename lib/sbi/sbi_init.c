@@ -82,8 +82,7 @@ static void sbi_boot_print_general(struct sbi_scratch *scratch)
 		return;
 
 	/* Platform details */
-	sbi_printf("Platform Name             : %s\n",
-		   sbi_platform_name(plat));
+	sbi_printf("Platform Name             : %s\n", sbi_platform_name(plat));
 	sbi_platform_get_features_str(plat, str, sizeof(str));
 	sbi_printf("Platform Features         : %s\n", str);
 	sbi_printf("Platform HART Count       : %u\n",
@@ -93,8 +92,7 @@ static void sbi_boot_print_general(struct sbi_scratch *scratch)
 		   (idev) ? idev->name : "---");
 	tdev = sbi_timer_get_device();
 	sbi_printf("Platform Timer Device     : %s @ %luHz\n",
-		   (tdev) ? tdev->name : "---",
-		   (tdev) ? tdev->timer_freq : 0);
+		   (tdev) ? tdev->name : "---", (tdev) ? tdev->timer_freq : 0);
 	cdev = sbi_console_get_device();
 	sbi_printf("Platform Console Device   : %s\n",
 		   (cdev) ? cdev->name : "---");
@@ -121,20 +119,22 @@ static void sbi_boot_print_general(struct sbi_scratch *scratch)
 	sbi_printf("Firmware Base             : 0x%lx\n", scratch->fw_start);
 	sbi_printf("Firmware Size             : %d KB\n",
 		   (u32)(scratch->fw_size / 1024));
-	sbi_printf("Firmware RW Offset        : 0x%lx\n", scratch->fw_rw_offset);
+	sbi_printf("Firmware RW Offset        : 0x%lx\n",
+		   scratch->fw_rw_offset);
 	sbi_printf("Firmware RW Size          : %d KB\n",
 		   (u32)((scratch->fw_size - scratch->fw_rw_offset) / 1024));
-	sbi_printf("Firmware Heap Offset      : 0x%lx\n", scratch->fw_heap_offset);
-	sbi_printf("Firmware Heap Size        : "
-		   "%d KB (total), %d KB (reserved), %d KB (used), %d KB (free)\n",
-		   (u32)(scratch->fw_heap_size / 1024),
-		   (u32)(sbi_heap_reserved_space() / 1024),
-		   (u32)(sbi_heap_used_space() / 1024),
-		   (u32)(sbi_heap_free_space() / 1024));
+	sbi_printf("Firmware Heap Offset      : 0x%lx\n",
+		   scratch->fw_heap_offset);
+	sbi_printf(
+		"Firmware Heap Size        : "
+		"%d KB (total), %d KB (reserved), %d KB (used), %d KB (free)\n",
+		(u32)(scratch->fw_heap_size / 1024),
+		(u32)(sbi_heap_reserved_space() / 1024),
+		(u32)(sbi_heap_used_space() / 1024),
+		(u32)(sbi_heap_free_space() / 1024));
 	sbi_printf("Firmware Scratch Size     : "
 		   "%d B (total), %d B (used), %d B (free)\n",
-		   SBI_SCRATCH_SIZE,
-		   (u32)sbi_scratch_used_space(),
+		   SBI_SCRATCH_SIZE, (u32)sbi_scratch_used_space(),
 		   (u32)(SBI_SCRATCH_SIZE - sbi_scratch_used_space()));
 
 	/* SBI details */
@@ -269,8 +269,7 @@ static void __noreturn init_coldboot(struct sbi_scratch *scratch, u32 hartid)
 
 	rc = sbi_pmu_init(scratch, true);
 	if (rc) {
-		sbi_printf("%s: pmu init failed (error %d)\n",
-			   __func__, rc);
+		sbi_printf("%s: pmu init failed (error %d)\n", __func__, rc);
 		sbi_hart_hang();
 	}
 
@@ -282,8 +281,8 @@ static void __noreturn init_coldboot(struct sbi_scratch *scratch, u32 hartid)
 
 	rc = sbi_irqchip_init(scratch, true);
 	if (rc) {
-		sbi_printf("%s: irqchip init failed (error %d)\n",
-			   __func__, rc);
+		sbi_printf("%s: irqchip init failed (error %d)\n", __func__,
+			   rc);
 		sbi_hart_hang();
 	}
 
@@ -319,8 +318,8 @@ static void __noreturn init_coldboot(struct sbi_scratch *scratch, u32 hartid)
 	 */
 	rc = sbi_domain_finalize(scratch, hartid);
 	if (rc) {
-		sbi_printf("%s: domain finalize failed (error %d)\n",
-			   __func__, rc);
+		sbi_printf("%s: domain finalize failed (error %d)\n", __func__,
+			   rc);
 		sbi_hart_hang();
 	}
 
@@ -361,8 +360,8 @@ static void __noreturn init_coldboot(struct sbi_scratch *scratch, u32 hartid)
 	 */
 	rc = sbi_hart_pmp_configure(scratch);
 	if (rc) {
-		sbi_printf("%s: PMP configure failed (error %d)\n",
-			   __func__, rc);
+		sbi_printf("%s: PMP configure failed (error %d)\n", __func__,
+			   rc);
 		sbi_hart_hang();
 	}
 
@@ -448,8 +447,7 @@ static void __noreturn init_warm_startup(struct sbi_scratch *scratch,
 	sbi_hsm_hart_start_finish(scratch, hartid);
 }
 
-static void __noreturn init_warm_resume(struct sbi_scratch *scratch,
-					u32 hartid)
+static void __noreturn init_warm_resume(struct sbi_scratch *scratch, u32 hartid)
 {
 	int rc;
 

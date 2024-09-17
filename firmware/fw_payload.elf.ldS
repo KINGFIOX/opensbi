@@ -12,7 +12,7 @@ ENTRY(_start)
 
 SECTIONS
 {
-	#include "fw_base.ldS"
+	#include "fw_base.ldS" /* 相当于把文件复制了一遍 */
 
 #ifdef FW_PAYLOAD_OFFSET
 	. = FW_TEXT_START + FW_PAYLOAD_OFFSET;

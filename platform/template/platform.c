@@ -18,44 +18,40 @@
 #include <sbi_utils/serial/uart8250.h>
 #include <sbi_utils/timer/aclint_mtimer.h>
 
-#define PLATFORM_PLIC_ADDR		0xc000000
-#define PLATFORM_PLIC_SIZE		(0x200000 + \
-					 (PLATFORM_HART_COUNT * 0x1000))
-#define PLATFORM_PLIC_NUM_SOURCES	128
-#define PLATFORM_HART_COUNT		4
-#define PLATFORM_CLINT_ADDR		0x2000000
-#define PLATFORM_ACLINT_MTIMER_FREQ	10000000
-#define PLATFORM_ACLINT_MSWI_ADDR	(PLATFORM_CLINT_ADDR + \
-					 CLINT_MSWI_OFFSET)
-#define PLATFORM_ACLINT_MTIMER_ADDR	(PLATFORM_CLINT_ADDR + \
-					 CLINT_MTIMER_OFFSET)
-#define PLATFORM_UART_ADDR		0x09000000
-#define PLATFORM_UART_INPUT_FREQ	10000000
-#define PLATFORM_UART_BAUDRATE		115200
+#define PLATFORM_PLIC_ADDR 0xc000000
+#define PLATFORM_PLIC_SIZE (0x200000 + (PLATFORM_HART_COUNT * 0x1000))
+#define PLATFORM_PLIC_NUM_SOURCES 128
+#define PLATFORM_HART_COUNT 4
+#define PLATFORM_CLINT_ADDR 0x2000000
+#define PLATFORM_ACLINT_MTIMER_FREQ 10000000
+#define PLATFORM_ACLINT_MSWI_ADDR (PLATFORM_CLINT_ADDR + CLINT_MSWI_OFFSET)
+#define PLATFORM_ACLINT_MTIMER_ADDR (PLATFORM_CLINT_ADDR + CLINT_MTIMER_OFFSET)
+#define PLATFORM_UART_ADDR 0x09000000
+#define PLATFORM_UART_INPUT_FREQ 10000000
+#define PLATFORM_UART_BAUDRATE 115200
 
 static struct plic_data plic = {
-	.addr = PLATFORM_PLIC_ADDR,
-	.size = PLATFORM_PLIC_SIZE,
+	.addr	 = PLATFORM_PLIC_ADDR,
+	.size	 = PLATFORM_PLIC_SIZE,
 	.num_src = PLATFORM_PLIC_NUM_SOURCES,
 };
 
 static struct aclint_mswi_data mswi = {
-	.addr = PLATFORM_ACLINT_MSWI_ADDR,
-	.size = ACLINT_MSWI_SIZE,
+	.addr	      = PLATFORM_ACLINT_MSWI_ADDR,
+	.size	      = ACLINT_MSWI_SIZE,
 	.first_hartid = 0,
-	.hart_count = PLATFORM_HART_COUNT,
+	.hart_count   = PLATFORM_HART_COUNT,
 };
 
 static struct aclint_mtimer_data mtimer = {
 	.mtime_freq = PLATFORM_ACLINT_MTIMER_FREQ,
-	.mtime_addr = PLATFORM_ACLINT_MTIMER_ADDR +
-		      ACLINT_DEFAULT_MTIME_OFFSET,
+	.mtime_addr = PLATFORM_ACLINT_MTIMER_ADDR + ACLINT_DEFAULT_MTIME_OFFSET,
 	.mtime_size = ACLINT_DEFAULT_MTIME_SIZE,
-	.mtimecmp_addr = PLATFORM_ACLINT_MTIMER_ADDR +
-			 ACLINT_DEFAULT_MTIMECMP_OFFSET,
-	.mtimecmp_size = ACLINT_DEFAULT_MTIMECMP_SIZE,
-	.first_hartid = 0,
-	.hart_count = PLATFORM_HART_COUNT,
+	.mtimecmp_addr =
+		PLATFORM_ACLINT_MTIMER_ADDR + ACLINT_DEFAULT_MTIMECMP_OFFSET,
+	.mtimecmp_size	= ACLINT_DEFAULT_MTIMECMP_SIZE,
+	.first_hartid	= 0,
+	.hart_count	= PLATFORM_HART_COUNT,
 	.has_64bit_mmio = true,
 };
 
@@ -136,19 +132,19 @@ static int platform_timer_init(bool cold_boot)
  * Platform descriptor.
  */
 const struct sbi_platform_operations platform_ops = {
-	.early_init		= platform_early_init,
-	.final_init		= platform_final_init,
-	.irqchip_init		= platform_irqchip_init,
-	.ipi_init		= platform_ipi_init,
-	.timer_init		= platform_timer_init
+	.early_init   = platform_early_init,
+	.final_init   = platform_final_init,
+	.irqchip_init = platform_irqchip_init,
+	.ipi_init     = platform_ipi_init,
+	.timer_init   = platform_timer_init
 };
 const struct sbi_platform platform = {
-	.opensbi_version	= OPENSBI_VERSION,
-	.platform_version	= SBI_PLATFORM_VERSION(0x0, 0x00),
-	.name			= "platform-name",
-	.features		= SBI_PLATFORM_DEFAULT_FEATURES,
-	.hart_count		= 1,
-	.hart_stack_size	= SBI_PLATFORM_DEFAULT_HART_STACK_SIZE,
-	.heap_size		= SBI_PLATFORM_DEFAULT_HEAP_SIZE(1),
-	.platform_ops_addr	= (unsigned long)&platform_ops
+	.opensbi_version   = OPENSBI_VERSION,
+	.platform_version  = SBI_PLATFORM_VERSION(0x0, 0x00),
+	.name		   = "platform-name",
+	.features	   = SBI_PLATFORM_DEFAULT_FEATURES,
+	.hart_count	   = 1,
+	.hart_stack_size   = SBI_PLATFORM_DEFAULT_HART_STACK_SIZE,
+	.heap_size	   = SBI_PLATFORM_DEFAULT_HEAP_SIZE(1),
+	.platform_ops_addr = (unsigned long)&platform_ops
 };

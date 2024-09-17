@@ -40,7 +40,7 @@
 /** Offset of hart_index2id in struct sbi_platform */
 #define SBI_PLATFORM_HART_INDEX2ID_OFFSET (0x60 + (__SIZEOF_POINTER__ * 2))
 
-#define SBI_PLATFORM_TLB_RANGE_FLUSH_LIMIT_DEFAULT		(1UL << 12)
+#define SBI_PLATFORM_TLB_RANGE_FLUSH_LIMIT_DEFAULT (1UL << 12)
 
 #ifndef __ASSEMBLER__
 
@@ -66,8 +66,7 @@ enum sbi_platform_features {
 };
 
 /** Default feature set for a platform */
-#define SBI_PLATFORM_DEFAULT_FEATURES                                \
-	(SBI_PLATFORM_HAS_MFAULTS_DELEGATION)
+#define SBI_PLATFORM_DEFAULT_FEATURES (SBI_PLATFORM_HAS_MFAULTS_DELEGATION)
 
 /** Platform functions */
 struct sbi_platform_operations {
@@ -135,8 +134,7 @@ struct sbi_platform_operations {
 	/** Check if SBI vendor extension is implemented or not */
 	bool (*vendor_ext_check)(void);
 	/** platform specific SBI extension implementation provider */
-	int (*vendor_ext_provider)(long funcid,
-				   struct sbi_trap_regs *regs,
+	int (*vendor_ext_provider)(long funcid, struct sbi_trap_regs *regs,
 				   struct sbi_ecall_return *out);
 
 	/** platform specific handler to fixup load fault */
@@ -148,11 +146,11 @@ struct sbi_platform_operations {
 };
 
 /** Platform default per-HART stack size for exception/interrupt handling */
-#define SBI_PLATFORM_DEFAULT_HART_STACK_SIZE	8192
+#define SBI_PLATFORM_DEFAULT_HART_STACK_SIZE 8192
 
 /** Platform default heap size */
-#define SBI_PLATFORM_DEFAULT_HEAP_SIZE(__num_hart)	\
-					(0x8000 + 0x800 * (__num_hart))
+#define SBI_PLATFORM_DEFAULT_HEAP_SIZE(__num_hart) \
+	(0x8000 + 0x800 * (__num_hart))
 
 /** Representation of a platform */
 struct sbi_platform {
@@ -206,58 +204,49 @@ struct sbi_platform {
  * Prevent modification of struct sbi_platform from affecting
  * SBI_PLATFORM_xxx_OFFSET
  */
-_Static_assert(
-	offsetof(struct sbi_platform, opensbi_version)
-		== SBI_PLATFORM_OPENSBI_VERSION_OFFSET,
-	"struct sbi_platform definition has changed, please redefine "
-	"SBI_PLATFORM_OPENSBI_VERSION_OFFSET");
-_Static_assert(
-	offsetof(struct sbi_platform, platform_version)
-		== SBI_PLATFORM_VERSION_OFFSET,
-	"struct sbi_platform definition has changed, please redefine "
-	"SBI_PLATFORM_VERSION_OFFSET");
-_Static_assert(
-	offsetof(struct sbi_platform, name)
-		== SBI_PLATFORM_NAME_OFFSET,
-	"struct sbi_platform definition has changed, please redefine "
-	"SBI_PLATFORM_NAME_OFFSET");
-_Static_assert(
-	offsetof(struct sbi_platform, features)
-		== SBI_PLATFORM_FEATURES_OFFSET,
-	"struct sbi_platform definition has changed, please redefine "
-	"SBI_PLATFORM_FEATURES_OFFSET");
-_Static_assert(
-	offsetof(struct sbi_platform, hart_count)
-		== SBI_PLATFORM_HART_COUNT_OFFSET,
-	"struct sbi_platform definition has changed, please redefine "
-	"SBI_PLATFORM_HART_COUNT_OFFSET");
-_Static_assert(
-	offsetof(struct sbi_platform, hart_stack_size)
-		== SBI_PLATFORM_HART_STACK_SIZE_OFFSET,
-	"struct sbi_platform definition has changed, please redefine "
-	"SBI_PLATFORM_HART_STACK_SIZE_OFFSET");
-_Static_assert(
-	offsetof(struct sbi_platform, platform_ops_addr)
-		== SBI_PLATFORM_OPS_OFFSET,
-	"struct sbi_platform definition has changed, please redefine "
-	"SBI_PLATFORM_OPS_OFFSET");
-_Static_assert(
-	offsetof(struct sbi_platform, firmware_context)
-		== SBI_PLATFORM_FIRMWARE_CONTEXT_OFFSET,
-	"struct sbi_platform definition has changed, please redefine "
-	"SBI_PLATFORM_FIRMWARE_CONTEXT_OFFSET");
-_Static_assert(
-	offsetof(struct sbi_platform, hart_index2id)
-		== SBI_PLATFORM_HART_INDEX2ID_OFFSET,
-	"struct sbi_platform definition has changed, please redefine "
-	"SBI_PLATFORM_HART_INDEX2ID_OFFSET");
+_Static_assert(offsetof(struct sbi_platform, opensbi_version) ==
+		       SBI_PLATFORM_OPENSBI_VERSION_OFFSET,
+	       "struct sbi_platform definition has changed, please redefine "
+	       "SBI_PLATFORM_OPENSBI_VERSION_OFFSET");
+_Static_assert(offsetof(struct sbi_platform, platform_version) ==
+		       SBI_PLATFORM_VERSION_OFFSET,
+	       "struct sbi_platform definition has changed, please redefine "
+	       "SBI_PLATFORM_VERSION_OFFSET");
+_Static_assert(offsetof(struct sbi_platform, name) == SBI_PLATFORM_NAME_OFFSET,
+	       "struct sbi_platform definition has changed, please redefine "
+	       "SBI_PLATFORM_NAME_OFFSET");
+_Static_assert(offsetof(struct sbi_platform, features) ==
+		       SBI_PLATFORM_FEATURES_OFFSET,
+	       "struct sbi_platform definition has changed, please redefine "
+	       "SBI_PLATFORM_FEATURES_OFFSET");
+_Static_assert(offsetof(struct sbi_platform, hart_count) ==
+		       SBI_PLATFORM_HART_COUNT_OFFSET,
+	       "struct sbi_platform definition has changed, please redefine "
+	       "SBI_PLATFORM_HART_COUNT_OFFSET");
+_Static_assert(offsetof(struct sbi_platform, hart_stack_size) ==
+		       SBI_PLATFORM_HART_STACK_SIZE_OFFSET,
+	       "struct sbi_platform definition has changed, please redefine "
+	       "SBI_PLATFORM_HART_STACK_SIZE_OFFSET");
+_Static_assert(offsetof(struct sbi_platform, platform_ops_addr) ==
+		       SBI_PLATFORM_OPS_OFFSET,
+	       "struct sbi_platform definition has changed, please redefine "
+	       "SBI_PLATFORM_OPS_OFFSET");
+_Static_assert(offsetof(struct sbi_platform, firmware_context) ==
+		       SBI_PLATFORM_FIRMWARE_CONTEXT_OFFSET,
+	       "struct sbi_platform definition has changed, please redefine "
+	       "SBI_PLATFORM_FIRMWARE_CONTEXT_OFFSET");
+_Static_assert(offsetof(struct sbi_platform, hart_index2id) ==
+		       SBI_PLATFORM_HART_INDEX2ID_OFFSET,
+	       "struct sbi_platform definition has changed, please redefine "
+	       "SBI_PLATFORM_HART_INDEX2ID_OFFSET");
 
 /** Get pointer to sbi_platform for sbi_scratch pointer */
 #define sbi_platform_ptr(__s) \
 	((const struct sbi_platform *)((__s)->platform_addr))
 /** Get pointer to sbi_platform for current HART */
-#define sbi_platform_thishart_ptr() ((const struct sbi_platform *) \
-	(sbi_scratch_thishart_ptr()->platform_addr))
+#define sbi_platform_thishart_ptr()                               \
+	((const struct sbi_platform *)(sbi_scratch_thishart_ptr() \
+					       ->platform_addr))
 /** Get pointer to platform_ops_addr from platform pointer **/
 #define sbi_platform_ops(__p) \
 	((const struct sbi_platform_operations *)(__p)->platform_ops_addr)
@@ -299,8 +288,8 @@ static inline const char *sbi_platform_name(const struct sbi_platform *plat)
  *
  * @return the features value currently set for the given platform
  */
-static inline unsigned long sbi_platform_get_features(
-						const struct sbi_platform *plat)
+static inline unsigned long
+sbi_platform_get_features(const struct sbi_platform *plat)
 {
 	if (plat)
 		return plat->features;
@@ -330,7 +319,8 @@ static inline u64 sbi_platform_tlbr_flush_limit(const struct sbi_platform *plat)
  *
  * @return number of tlb fifo entries
 */
-static inline u32 sbi_platform_tlb_fifo_num_entries(const struct sbi_platform *plat)
+static inline u32
+sbi_platform_tlb_fifo_num_entries(const struct sbi_platform *plat)
 {
 	if (plat && sbi_platform_ops(plat)->get_tlb_num_entries)
 		return sbi_platform_ops(plat)->get_tlb_num_entries();
@@ -373,9 +363,8 @@ static inline u32 sbi_platform_hart_stack_size(const struct sbi_platform *plat)
  *
  * @return true if HART is allowed to do cold boot and false otherwise
  */
-static inline bool sbi_platform_cold_boot_allowed(
-					const struct sbi_platform *plat,
-					u32 hartid)
+static inline bool
+sbi_platform_cold_boot_allowed(const struct sbi_platform *plat, u32 hartid)
 {
 	if (plat && sbi_platform_ops(plat)->cold_boot_allowed)
 		return sbi_platform_ops(plat)->cold_boot_allowed(hartid);
@@ -490,9 +479,9 @@ static inline int sbi_platform_misa_xlen(const struct sbi_platform *plat)
  *
  * @return 0 on success and negative error code on failure
  */
-static inline int sbi_platform_extensions_init(
-					const struct sbi_platform *plat,
-					struct sbi_hart_features *hfeatures)
+static inline int
+sbi_platform_extensions_init(const struct sbi_platform *plat,
+			     struct sbi_hart_features *hfeatures)
 {
 	if (plat && sbi_platform_ops(plat)->extensions_init)
 		return sbi_platform_ops(plat)->extensions_init(hfeatures);
@@ -537,8 +526,9 @@ static inline int sbi_platform_pmu_init(const struct sbi_platform *plat)
  * @return expected value by the platform or 0 if platform doesn't know about
  * the event
  */
-static inline uint64_t sbi_platform_pmu_xlate_to_mhpmevent(const struct sbi_platform *plat,
-						      uint32_t event_idx, uint64_t data)
+static inline uint64_t
+sbi_platform_pmu_xlate_to_mhpmevent(const struct sbi_platform *plat,
+				    uint32_t event_idx, uint64_t data)
 {
 	if (plat && sbi_platform_ops(plat)->pmu_xlate_to_mhpmevent)
 		return sbi_platform_ops(plat)->pmu_xlate_to_mhpmevent(event_idx,
@@ -634,8 +624,8 @@ static inline void sbi_platform_timer_exit(const struct sbi_platform *plat)
  *
  * @return false if not implemented and true if implemented
  */
-static inline bool sbi_platform_vendor_ext_check(
-					const struct sbi_platform *plat)
+static inline bool
+sbi_platform_vendor_ext_check(const struct sbi_platform *plat)
 {
 	if (plat && sbi_platform_ops(plat)->vendor_ext_check)
 		return sbi_platform_ops(plat)->vendor_ext_check();
@@ -654,15 +644,14 @@ static inline bool sbi_platform_vendor_ext_check(
  *
  * @return 0 on success and negative error code on failure
  */
-static inline int sbi_platform_vendor_ext_provider(
-					const struct sbi_platform *plat,
-					long funcid,
-					struct sbi_trap_regs *regs,
-					struct sbi_ecall_return *out)
+static inline int
+sbi_platform_vendor_ext_provider(const struct sbi_platform *plat, long funcid,
+				 struct sbi_trap_regs *regs,
+				 struct sbi_ecall_return *out)
 {
 	if (plat && sbi_platform_ops(plat)->vendor_ext_provider)
-		return sbi_platform_ops(plat)->vendor_ext_provider(funcid,
-								regs, out);
+		return sbi_platform_ops(plat)->vendor_ext_provider(funcid, regs,
+								   out);
 
 	return SBI_ENOTSUPP;
 }

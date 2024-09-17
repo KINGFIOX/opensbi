@@ -7,33 +7,36 @@
  *   Anup Patel <anup.patel@wdc.com>
  */
 
+/// @brief 这个文件定义了 sbi 里面用到的数据类型
+
 #ifndef __SBI_TYPES_H__
 #define __SBI_TYPES_H__
 
 #ifndef OPENSBI_EXTERNAL_SBI_TYPES
 
 /* clang-format off */
+// NOTICE 这个 clang-format 有意思
 
-typedef char			s8;
+typedef char				s8;
 typedef unsigned char		u8;
 typedef unsigned char		uint8_t;
 
-typedef short			s16;
+typedef short				s16;
 typedef unsigned short		u16;
-typedef short			int16_t;
+typedef short				int16_t;
 typedef unsigned short		uint16_t;
 
-typedef int			s32;
+typedef int					s32;
 typedef unsigned int		u32;
-typedef int			int32_t;
+typedef int					int32_t;
 typedef unsigned int		uint32_t;
 
 #if __riscv_xlen == 64
-typedef long			s64;
+typedef long				s64;
 typedef unsigned long		u64;
-typedef long			int64_t;
+typedef long				int64_t;
 typedef unsigned long		uint64_t;
-#define PRILX			"016lx"
+#define PRILX				"016lx"
 #elif __riscv_xlen == 32
 typedef long long		s64;
 typedef unsigned long long	u64;
@@ -44,11 +47,11 @@ typedef unsigned long long	uint64_t;
 #error "Unexpected __riscv_xlen"
 #endif
 
-typedef int			bool;
+typedef int					bool;
 typedef unsigned long		ulong;
 typedef unsigned long		uintptr_t;
 typedef unsigned long		size_t;
-typedef long			ssize_t;
+typedef long				ssize_t;
 typedef unsigned long		virtual_addr_t;
 typedef unsigned long		virtual_size_t;
 typedef unsigned long		physical_addr_t;

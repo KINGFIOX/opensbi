@@ -158,22 +158,23 @@ void csr_write_num(int csr_num, unsigned long val);
 	} while (0)
 
 #define ebreak()                                             \
-	do {                                              \
+	do {                                                 \
 		__asm__ __volatile__("ebreak" ::: "memory"); \
 	} while (0)
 
 /* Get current HART id */
-#define current_hartid()	((unsigned int)csr_read(CSR_MHARTID))
+#define current_hartid() ((unsigned int)csr_read(CSR_MHARTID))
 
 /* determine CPU extension, return non-zero support */
 int misa_extension_imp(char ext);
 
-#define misa_extension(c)\
-({\
-	_Static_assert(((c >= 'A') && (c <= 'Z')),\
-		"The parameter of misa_extension must be [A-Z]");\
-	misa_extension_imp(c);\
-})
+#define misa_extension(c)                                                 \
+	({                                                                \
+		_Static_assert(                                           \
+			((c >= 'A') && (c <= 'Z')),                       \
+			"The parameter of misa_extension must be [A-Z]"); \
+		misa_extension_imp(c);                                    \
+	})
 
 /* Get MXL field of misa, return -1 on error */
 int misa_xlen(void);

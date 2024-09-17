@@ -7,8 +7,8 @@
  *   Anup Patel <anup.patel@wdc.com>
  */
 
-OUTPUT_ARCH(riscv)
-ENTRY(_start)
+OUTPUT_ARCH(riscv)  /* 指定架构 */
+ENTRY(_start) /* 程序的入口地址 */
 
 SECTIONS
 {
@@ -18,7 +18,7 @@ SECTIONS
 	. = ALIGN(FW_PAYLOAD_ALIGN);
 #endif
 
-	PROVIDE(_payload_start = .);
+	PROVIDE(_payload_start = .); /* 定义符号 _payload_start */
 
 	. = ALIGN(0x1000); /* Need this to create proper sections */
 
