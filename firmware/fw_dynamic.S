@@ -50,10 +50,11 @@ fw_boot_hart:
 	*/
 fw_save_info:
 	/*           Save next arg1 in 'a1' */
-	lla          a4, _dynamic_next_arg1
+	lla          a4, _dynamic_next_arg1                                            # a1 存放有 下一个阶段的 arg1
 	REG_S        a1, (a4)                                                          # (_dynamic_next_arg1) <- fdt
 
 	/*           Save version == 0x1 fields */
+	//           这个数据结构, 请看 include/sbi/fw_dynamic.h 中的 struct fw_dynamic_info
 	lla          a4, _dynamic_next_addr                                            # (_dynamic_next_addr) <- 16(a2)
 	REG_L        a3, FW_DYNAMIC_INFO_NEXT_ADDR_OFFSET(a2)
 	REG_S        a3, (a4)
@@ -96,7 +97,7 @@ fw_next_arg1:
 	*            The next address should be returned in 'a0'.
 	*/
 fw_next_addr:
-	lla          a0, _dynamic_next_addr
+	lla          a0, _dynamic_next_addr                                            # 一个动态的地址
 	REG_L        a0, (a0)
 	ret
 

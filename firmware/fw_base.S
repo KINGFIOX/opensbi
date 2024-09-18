@@ -101,6 +101,7 @@ _bss_zero:
 	add                                    sp, s4, s5
 
 	/*                                     Allow main firmware to save info */
+# a1, a2 上面没有用到过. a2 可以作为: fw_dynamic 的 上下文
 	MOV_5R                                 s0, a0, s1, a1, s2, a2, s3, a3, s4, a4
 	call                                   fw_save_info                                                                     # 这个被定义在 fw_dynamic, fw_jump, fw_payload 中
 	MOV_5R                                 a0, s0, a1, s1, a2, s2, a3, s3, a4, s4
@@ -187,14 +188,15 @@ _scratch_init:
 	REG_S                                  s10, SBI_SCRATCH_FW_HEAP_OFFSET(tp)
 	REG_S                                  s9, SBI_SCRATCH_FW_HEAP_SIZE_OFFSET(tp)
 
+# 下一级 stage
 	/*                                     Store next arg1 in scratch space */
 	MOV_3R                                 s0, a0, s1, a1, s2, a2
-	call                                   fw_next_arg1
+	call                                   fw_next_arg1                                                                     # 传给下一个阶段的 arg
 	REG_S                                  a0, SBI_SCRATCH_NEXT_ARG1_OFFSET(tp)
 	MOV_3R                                 a0, s0, a1, s1, a2, s2
 	/*                                     Store next address in scratch space */
 	MOV_3R                                 s0, a0, s1, a1, s2, a2
-	call                                   fw_next_addr
+	call                                   fw_next_addr                                                                     # next stage entry addr
 	REG_S                                  a0, SBI_SCRATCH_NEXT_ADDR_OFFSET(tp)
 	MOV_3R                                 a0, s0, a1, s1, a2, s2
 	/*                                     Store next mode in scratch space */

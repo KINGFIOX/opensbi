@@ -73,7 +73,7 @@ struct fw_dynamic_info {
 	 * to use the relocation lottery mechanism.
 	 */
 	unsigned long boot_hart;
-} __packed;
+} __packed; // __attribute__((packed)) 不会有 padding
 
 /**
  * Prevent modification of struct fw_dynamic_info from affecting
