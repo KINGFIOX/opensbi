@@ -237,6 +237,9 @@ int fdt_next_subnode(const void *fdt, int offset);
 /**********************************************************************/
 /* General functions                                                  */
 /**********************************************************************/
+
+/// @brief 获取 FDT 的头部信息
+
 #define fdt_get_header(fdt, field) \
 	(fdt32_ld(&((const struct fdt_header *)(fdt))->field))
 #define fdt_magic(fdt)			(fdt_get_header(fdt, magic))
@@ -256,7 +259,16 @@ int fdt_next_subnode(const void *fdt, int offset);
 		struct fdt_header *fdth = (struct fdt_header *)fdt; \
 		fdth->name = cpu_to_fdt32(val); \
 	}
+
+// generate function
+// static inline void fdt_set_magic(void *fdt, uint32_t val)
+// {
+// 		struct fdt_header *fdth = (struct fdt_header *)fdt;
+// 		fdth->magic = cpu_to_fdt32(val);
+// }
 fdt_set_hdr_(magic);
+
+
 fdt_set_hdr_(totalsize);
 fdt_set_hdr_(off_dt_struct);
 fdt_set_hdr_(off_dt_strings);

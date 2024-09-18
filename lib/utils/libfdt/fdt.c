@@ -13,8 +13,12 @@
 /*
  * Minimal sanity check for a read-only tree. fdt_ro_probe_() checks
  * that the given buffer contains what appears to be a flattened
- * device tree with sane information in its header.
+ * device tree with sane(正确) information in its header.
  */
+
+/// @brief return the total size of the device tree
+/// @param fdt 
+/// @return 负数表示: 错误, 正数返回: fdt_totalsize(fdt)
 int32_t fdt_ro_probe_(const void *fdt)
 {
 	uint32_t totalsize = fdt_totalsize(fdt);
@@ -28,8 +32,12 @@ int32_t fdt_ro_probe_(const void *fdt)
 
 	if (fdt_magic(fdt) == FDT_MAGIC) {
 		/* Complete tree */
+		// expend to 
+		// if (!can_assume_(ASSUME_LAST)) {
+		// 其中 	ASSUME_LATEST = 1 << 2,
 		if (!can_assume(LATEST)) {
-			if (fdt_version(fdt) < FDT_FIRST_SUPPORTED_VERSION)
+		 	// 版本不兼容
+			if (fdt_version(fdt) < FDT_FIRST_SUPPORTED_VERSION)  
 				return -FDT_ERR_BADVERSION;
 			if (fdt_last_comp_version(fdt) >
 					FDT_LAST_SUPPORTED_VERSION)
@@ -162,6 +170,11 @@ const void *fdt_offset_ptr(const void *fdt, int offset, unsigned int len)
 	return fdt_offset_ptr_(fdt, offset);
 }
 
+/// @brief 
+/// @param fdt 
+/// @param startoffset 
+/// @param nextoffset 
+/// @return 
 uint32_t fdt_next_tag(const void *fdt, int startoffset, int *nextoffset)
 {
 	int offset = startoffset;
@@ -214,12 +227,16 @@ uint32_t fdt_next_tag(const void *fdt, int startoffset, int *nextoffset)
 	return tag;
 }
 
+/// @brief 
+/// @param fdt 
+/// @param offset 
+/// @return 
 int fdt_check_node_offset_(const void *fdt, int offset)
 {
-	if (!can_assume(VALID_INPUT)
-	    && ((offset < 0) || (offset % FDT_TAGSIZE)))
+	if (!can_assume(VALID_INPUT) && ((offset < 0) || (offset % FDT_TAGSIZE)))
 		return -FDT_ERR_BADOFFSET;
 
+	// 检查给定的 offset 是否开启了一个新的节点
 	if (fdt_next_tag(fdt, offset, &offset) != FDT_BEGIN_NODE)
 		return -FDT_ERR_BADOFFSET;
 

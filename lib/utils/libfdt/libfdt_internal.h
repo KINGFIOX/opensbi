@@ -8,6 +8,8 @@
 #include <fdt.h>
 
 #define FDT_ALIGN(x, a)		(((x) + (a) - 1) & ~((a) - 1))
+
+/// 是否 32bit 对齐
 #define FDT_TAGALIGN(x)		(FDT_ALIGN((x), FDT_TAGSIZE))
 
 int32_t fdt_ro_probe_(const void *fdt);
@@ -188,5 +190,7 @@ static inline bool can_assume_(int mask)
 
 /** helper macros for checking assumptions */
 #define can_assume(_assume)	can_assume_(ASSUME_ ## _assume)
+// can_assume(LATEST) expend to : can_assume_(ASSUME_LATEST)
+
 
 #endif /* LIBFDT_INTERNAL_H */

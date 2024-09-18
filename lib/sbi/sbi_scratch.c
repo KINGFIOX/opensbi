@@ -1,4 +1,4 @@
- /*
+/*
  * SPDX-License-Identifier: BSD-2-Clause
  *
  * Copyright (c) 2019 Western Digital Corporation or its affiliates.
@@ -14,11 +14,13 @@
 #include <sbi/sbi_scratch.h>
 #include <sbi/sbi_string.h>
 
-u32 last_hartindex_having_scratch = 0;
+u32 last_hartindex_having_scratch			 = 0;
 u32 hartindex_to_hartid_table[SBI_HARTMASK_MAX_BITS + 1] = { -1U };
-struct sbi_scratch *hartindex_to_scratch_table[SBI_HARTMASK_MAX_BITS + 1] = { 0 };
+struct sbi_scratch *hartindex_to_scratch_table[SBI_HARTMASK_MAX_BITS + 1] = {
+	0
+};
 
-static spinlock_t extra_lock = SPIN_LOCK_INITIALIZER;
+static spinlock_t extra_lock	  = SPIN_LOCK_INITIALIZER;
 static unsigned long extra_offset = SBI_SCRATCH_EXTRA_SPACE_OFFSET;
 
 u32 sbi_hartid_to_hartindex(u32 hartid)

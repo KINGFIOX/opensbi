@@ -164,7 +164,7 @@ Disassembly of section .text:
      22a:	00040533          	add	a0,s0,zero
      22e:	000485b3          	add	a1,s1,zero
      232:	00090633          	add	a2,s2,zero
-     236:	931e                	add	t1,t1,t2
+     236:	0305                	addi	t1,t1,1
      238:	f17349e3          	blt	t1,s7,14a <_scratch_init>
      23c:	c1d9                	beqz	a1,2c2 <_fdt_reloc_done>
      23e:	0ff00713          	li	a4,255
@@ -49204,25 +49204,25 @@ Disassembly of section .text:
    22d04:	fb043703          	ld	a4,-80(s0)
    22d08:	97ba                	add	a5,a5,a4
    22d0a:	fcf43423          	sd	a5,-56(s0)
-   22d0e:	fb043783          	ld	a5,-80(s0)
-   22d12:	fef43423          	sd	a5,-24(s0)
-   22d16:	fe042223          	sw	zero,-28(s0)
-   22d1a:	fb843503          	ld	a0,-72(s0)
-   22d1e:	9d1fe0ef          	jal	216ee <fdt_ro_probe_>
-   22d22:	87aa                	mv	a5,a0
-   22d24:	fcf42223          	sw	a5,-60(s0)
-   22d28:	fc442783          	lw	a5,-60(s0)
-   22d2c:	2781                	sext.w	a5,a5
-   22d2e:	0007d563          	bgez	a5,22d38 <fdt_path_offset_namelen+0x4e>
-   22d32:	fc442783          	lw	a5,-60(s0)
-   22d36:	aa0d                	j	22e68 <fdt_path_offset_namelen+0x17e>
+   22d0e:	fe042623          	sw	zero,-20(s0)
+   22d12:	fb843503          	ld	a0,-72(s0)
+   22d16:	9d9fe0ef          	jal	216ee <fdt_ro_probe_>
+   22d1a:	87aa                	mv	a5,a0
+   22d1c:	fcf42223          	sw	a5,-60(s0)
+   22d20:	fc442783          	lw	a5,-60(s0)
+   22d24:	2781                	sext.w	a5,a5
+   22d26:	0007d563          	bgez	a5,22d30 <fdt_path_offset_namelen+0x46>
+   22d2a:	fc442783          	lw	a5,-60(s0)
+   22d2e:	aa2d                	j	22e68 <fdt_path_offset_namelen+0x17e>
+   22d30:	fb043783          	ld	a5,-80(s0)
+   22d34:	fef43023          	sd	a5,-32(s0)
    22d38:	fb043783          	ld	a5,-80(s0)
    22d3c:	0007c783          	lbu	a5,0(a5)
    22d40:	873e                	mv	a4,a5
    22d42:	02f00793          	li	a5,47
    22d46:	10f70963          	beq	a4,a5,22e58 <fdt_path_offset_namelen+0x16e>
    22d4a:	fc843703          	ld	a4,-56(s0)
-   22d4e:	fe843783          	ld	a5,-24(s0)
+   22d4e:	fe043783          	ld	a5,-32(s0)
    22d52:	40f707b3          	sub	a5,a4,a5
    22d56:	863e                	mv	a2,a5
    22d58:	02f00593          	li	a1,47
@@ -49234,45 +49234,45 @@ Disassembly of section .text:
    22d6e:	fc843783          	ld	a5,-56(s0)
    22d72:	fcf43c23          	sd	a5,-40(s0)
    22d76:	fd843703          	ld	a4,-40(s0)
-   22d7a:	fe843783          	ld	a5,-24(s0)
+   22d7a:	fe043783          	ld	a5,-32(s0)
    22d7e:	40f707b3          	sub	a5,a4,a5
    22d82:	2781                	sext.w	a5,a5
    22d84:	863e                	mv	a2,a5
-   22d86:	fe843583          	ld	a1,-24(s0)
+   22d86:	fe043583          	ld	a1,-32(s0)
    22d8a:	fb843503          	ld	a0,-72(s0)
    22d8e:	7e6000ef          	jal	23574 <fdt_get_alias_namelen>
-   22d92:	fea43423          	sd	a0,-24(s0)
-   22d96:	fe843783          	ld	a5,-24(s0)
+   22d92:	fea43023          	sd	a0,-32(s0)
+   22d96:	fe043783          	ld	a5,-32(s0)
    22d9a:	e399                	bnez	a5,22da0 <fdt_path_offset_namelen+0xb6>
    22d9c:	57ed                	li	a5,-5
    22d9e:	a0e9                	j	22e68 <fdt_path_offset_namelen+0x17e>
-   22da0:	fe843583          	ld	a1,-24(s0)
+   22da0:	fe043583          	ld	a1,-32(s0)
    22da4:	fb843503          	ld	a0,-72(s0)
    22da8:	0ca000ef          	jal	22e72 <fdt_path_offset>
    22dac:	87aa                	mv	a5,a0
-   22dae:	fef42223          	sw	a5,-28(s0)
+   22dae:	fef42623          	sw	a5,-20(s0)
    22db2:	fd843783          	ld	a5,-40(s0)
-   22db6:	fef43423          	sd	a5,-24(s0)
+   22db6:	fef43023          	sd	a5,-32(s0)
    22dba:	a879                	j	22e58 <fdt_path_offset_namelen+0x16e>
-   22dbc:	fe843783          	ld	a5,-24(s0)
+   22dbc:	fe043783          	ld	a5,-32(s0)
    22dc0:	0785                	addi	a5,a5,1
-   22dc2:	fef43423          	sd	a5,-24(s0)
-   22dc6:	fe843703          	ld	a4,-24(s0)
+   22dc2:	fef43023          	sd	a5,-32(s0)
+   22dc6:	fe043703          	ld	a4,-32(s0)
    22dca:	fc843783          	ld	a5,-56(s0)
    22dce:	00f71563          	bne	a4,a5,22dd8 <fdt_path_offset_namelen+0xee>
-   22dd2:	fe442783          	lw	a5,-28(s0)
+   22dd2:	fec42783          	lw	a5,-20(s0)
    22dd6:	a849                	j	22e68 <fdt_path_offset_namelen+0x17e>
-   22dd8:	fe843783          	ld	a5,-24(s0)
+   22dd8:	fe043783          	ld	a5,-32(s0)
    22ddc:	0007c783          	lbu	a5,0(a5)
    22de0:	873e                	mv	a4,a5
    22de2:	02f00793          	li	a5,47
    22de6:	fcf70be3          	beq	a4,a5,22dbc <fdt_path_offset_namelen+0xd2>
    22dea:	fc843703          	ld	a4,-56(s0)
-   22dee:	fe843783          	ld	a5,-24(s0)
+   22dee:	fe043783          	ld	a5,-32(s0)
    22df2:	40f707b3          	sub	a5,a4,a5
    22df6:	863e                	mv	a2,a5
    22df8:	02f00593          	li	a1,47
-   22dfc:	fe843503          	ld	a0,-24(s0)
+   22dfc:	fe043503          	ld	a0,-32(s0)
    22e00:	ed4e50ef          	jal	84d4 <sbi_memchr>
    22e04:	fca43823          	sd	a0,-48(s0)
    22e08:	fd043783          	ld	a5,-48(s0)
@@ -49280,28 +49280,28 @@ Disassembly of section .text:
    22e0e:	fc843783          	ld	a5,-56(s0)
    22e12:	fcf43823          	sd	a5,-48(s0)
    22e16:	fd043703          	ld	a4,-48(s0)
-   22e1a:	fe843783          	ld	a5,-24(s0)
+   22e1a:	fe043783          	ld	a5,-32(s0)
    22e1e:	40f707b3          	sub	a5,a4,a5
    22e22:	0007871b          	sext.w	a4,a5
-   22e26:	fe442783          	lw	a5,-28(s0)
+   22e26:	fec42783          	lw	a5,-20(s0)
    22e2a:	86ba                	mv	a3,a4
-   22e2c:	fe843603          	ld	a2,-24(s0)
+   22e2c:	fe043603          	ld	a2,-32(s0)
    22e30:	85be                	mv	a1,a5
    22e32:	fb843503          	ld	a0,-72(s0)
    22e36:	dbbff0ef          	jal	22bf0 <fdt_subnode_offset_namelen>
    22e3a:	87aa                	mv	a5,a0
-   22e3c:	fef42223          	sw	a5,-28(s0)
-   22e40:	fe442783          	lw	a5,-28(s0)
+   22e3c:	fef42623          	sw	a5,-20(s0)
+   22e40:	fec42783          	lw	a5,-20(s0)
    22e44:	2781                	sext.w	a5,a5
    22e46:	0007d563          	bgez	a5,22e50 <fdt_path_offset_namelen+0x166>
-   22e4a:	fe442783          	lw	a5,-28(s0)
+   22e4a:	fec42783          	lw	a5,-20(s0)
    22e4e:	a829                	j	22e68 <fdt_path_offset_namelen+0x17e>
    22e50:	fd043783          	ld	a5,-48(s0)
-   22e54:	fef43423          	sd	a5,-24(s0)
-   22e58:	fe843703          	ld	a4,-24(s0)
+   22e54:	fef43023          	sd	a5,-32(s0)
+   22e58:	fe043703          	ld	a4,-32(s0)
    22e5c:	fc843783          	ld	a5,-56(s0)
    22e60:	f6f76ce3          	bltu	a4,a5,22dd8 <fdt_path_offset_namelen+0xee>
-   22e64:	fe442783          	lw	a5,-28(s0)
+   22e64:	fec42783          	lw	a5,-20(s0)
    22e68:	853e                	mv	a0,a5
    22e6a:	60e6                	ld	ra,88(sp)
    22e6c:	6446                	ld	s0,80(sp)

@@ -655,7 +655,7 @@ endif
 .PHONY: gdbserver
 gdbserver: all
 ifneq ($(platform-runcmd),)
-	$(platform-runcmd) $(RUN_ARGS) -S -s -smp 1
+	$(platform-runcmd) $(RUN_ARGS) -S -s -smp 2
 else
 ifdef PLATFORM
 	@echo "Platform $(PLATFORM) doesn't specify a run command"
@@ -668,7 +668,7 @@ endif
 
 .PHONY: gdbclient
 gdbclient: all
-	riscv64-unknown-linux-gnu-gdb -ex 'file ./build/platform/generic/firmware/fw_payload.elf' -ex 'target remote localhost:1234'
+	riscv64-unknown-linux-gnu-gdb -ex 'file ./build/platform/generic/firmware/fw_payload.elf' -ex 'target remote localhost:1234' -ex 'set scheduler-locking on'
 
 install_targets-y  = install_libsbi
 ifdef PLATFORM

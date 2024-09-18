@@ -89,61 +89,49 @@ struct sbi_scratch {
  * Prevent modification of struct sbi_scratch from affecting
  * SBI_SCRATCH_xxx_OFFSET
  */
-_Static_assert(
-	offsetof(struct sbi_scratch, fw_start)
-		== SBI_SCRATCH_FW_START_OFFSET,
-	"struct sbi_scratch definition has changed, please redefine "
-	"SBI_SCRATCH_FW_START_OFFSET");
-_Static_assert(
-	offsetof(struct sbi_scratch, fw_size)
-		== SBI_SCRATCH_FW_SIZE_OFFSET,
-	"struct sbi_scratch definition has changed, please redefine "
-	"SBI_SCRATCH_FW_SIZE_OFFSET");
-_Static_assert(
-	offsetof(struct sbi_scratch, next_arg1)
-		== SBI_SCRATCH_NEXT_ARG1_OFFSET,
-	"struct sbi_scratch definition has changed, please redefine "
-	"SBI_SCRATCH_NEXT_ARG1_OFFSET");
-_Static_assert(
-	offsetof(struct sbi_scratch, next_addr)
-		== SBI_SCRATCH_NEXT_ADDR_OFFSET,
-	"struct sbi_scratch definition has changed, please redefine "
-	"SBI_SCRATCH_NEXT_ADDR_OFFSET");
-_Static_assert(
-	offsetof(struct sbi_scratch, next_mode)
-		== SBI_SCRATCH_NEXT_MODE_OFFSET,
-	"struct sbi_scratch definition has changed, please redefine "
-	"SBI_SCRATCH_NEXT_MODE_OFFSET");
-_Static_assert(
-	offsetof(struct sbi_scratch, warmboot_addr)
-		== SBI_SCRATCH_WARMBOOT_ADDR_OFFSET,
-	"struct sbi_scratch definition has changed, please redefine "
-	"SBI_SCRATCH_WARMBOOT_ADDR_OFFSET");
-_Static_assert(
-	offsetof(struct sbi_scratch, platform_addr)
-		== SBI_SCRATCH_PLATFORM_ADDR_OFFSET,
-	"struct sbi_scratch definition has changed, please redefine "
-	"SBI_SCRATCH_PLATFORM_ADDR_OFFSET");
-_Static_assert(
-	offsetof(struct sbi_scratch, hartid_to_scratch)
-		== SBI_SCRATCH_HARTID_TO_SCRATCH_OFFSET,
-	"struct sbi_scratch definition has changed, please redefine "
-	"SBI_SCRATCH_HARTID_TO_SCRATCH_OFFSET");
-_Static_assert(
-	offsetof(struct sbi_scratch, trap_context)
-		== SBI_SCRATCH_TRAP_CONTEXT_OFFSET,
-	"struct sbi_scratch definition has changed, please redefine "
-	"SBI_SCRATCH_TRAP_CONTEXT_OFFSET");
-_Static_assert(
-	offsetof(struct sbi_scratch, tmp0)
-		== SBI_SCRATCH_TMP0_OFFSET,
-	"struct sbi_scratch definition has changed, please redefine "
-	"SBI_SCRATCH_TMP0_OFFSET");
-_Static_assert(
-	offsetof(struct sbi_scratch, options)
-		== SBI_SCRATCH_OPTIONS_OFFSET,
-	"struct sbi_scratch definition has changed, please redefine "
-	"SBI_SCRATCH_OPTIONS_OFFSET");
+_Static_assert(offsetof(struct sbi_scratch, fw_start) ==
+		       SBI_SCRATCH_FW_START_OFFSET,
+	       "struct sbi_scratch definition has changed, please redefine "
+	       "SBI_SCRATCH_FW_START_OFFSET");
+_Static_assert(offsetof(struct sbi_scratch, fw_size) ==
+		       SBI_SCRATCH_FW_SIZE_OFFSET,
+	       "struct sbi_scratch definition has changed, please redefine "
+	       "SBI_SCRATCH_FW_SIZE_OFFSET");
+_Static_assert(offsetof(struct sbi_scratch, next_arg1) ==
+		       SBI_SCRATCH_NEXT_ARG1_OFFSET,
+	       "struct sbi_scratch definition has changed, please redefine "
+	       "SBI_SCRATCH_NEXT_ARG1_OFFSET");
+_Static_assert(offsetof(struct sbi_scratch, next_addr) ==
+		       SBI_SCRATCH_NEXT_ADDR_OFFSET,
+	       "struct sbi_scratch definition has changed, please redefine "
+	       "SBI_SCRATCH_NEXT_ADDR_OFFSET");
+_Static_assert(offsetof(struct sbi_scratch, next_mode) ==
+		       SBI_SCRATCH_NEXT_MODE_OFFSET,
+	       "struct sbi_scratch definition has changed, please redefine "
+	       "SBI_SCRATCH_NEXT_MODE_OFFSET");
+_Static_assert(offsetof(struct sbi_scratch, warmboot_addr) ==
+		       SBI_SCRATCH_WARMBOOT_ADDR_OFFSET,
+	       "struct sbi_scratch definition has changed, please redefine "
+	       "SBI_SCRATCH_WARMBOOT_ADDR_OFFSET");
+_Static_assert(offsetof(struct sbi_scratch, platform_addr) ==
+		       SBI_SCRATCH_PLATFORM_ADDR_OFFSET,
+	       "struct sbi_scratch definition has changed, please redefine "
+	       "SBI_SCRATCH_PLATFORM_ADDR_OFFSET");
+_Static_assert(offsetof(struct sbi_scratch, hartid_to_scratch) ==
+		       SBI_SCRATCH_HARTID_TO_SCRATCH_OFFSET,
+	       "struct sbi_scratch definition has changed, please redefine "
+	       "SBI_SCRATCH_HARTID_TO_SCRATCH_OFFSET");
+_Static_assert(offsetof(struct sbi_scratch, trap_context) ==
+		       SBI_SCRATCH_TRAP_CONTEXT_OFFSET,
+	       "struct sbi_scratch definition has changed, please redefine "
+	       "SBI_SCRATCH_TRAP_CONTEXT_OFFSET");
+_Static_assert(offsetof(struct sbi_scratch, tmp0) == SBI_SCRATCH_TMP0_OFFSET,
+	       "struct sbi_scratch definition has changed, please redefine "
+	       "SBI_SCRATCH_TMP0_OFFSET");
+_Static_assert(offsetof(struct sbi_scratch, options) ==
+		       SBI_SCRATCH_OPTIONS_OFFSET,
+	       "struct sbi_scratch definition has changed, please redefine "
+	       "SBI_SCRATCH_OPTIONS_OFFSET");
 
 /** Possible options for OpenSBI library */
 enum sbi_scratch_options {
@@ -179,58 +167,59 @@ void sbi_scratch_free_offset(unsigned long offset);
 unsigned long sbi_scratch_used_space(void);
 
 /** Get pointer from offset in sbi_scratch */
-#define sbi_scratch_offset_ptr(scratch, offset)	(void *)((char *)(scratch) + (offset))
+#define sbi_scratch_offset_ptr(scratch, offset) \
+	(void *)((char *)(scratch) + (offset))
 
 /** Get pointer from offset in sbi_scratch for current HART */
-#define sbi_scratch_thishart_offset_ptr(offset)	\
+#define sbi_scratch_thishart_offset_ptr(offset) \
 	(void *)((char *)sbi_scratch_thishart_ptr() + (offset))
 
 /** Allocate offset for a data type in sbi_scratch */
-#define sbi_scratch_alloc_type_offset(__type)				\
+#define sbi_scratch_alloc_type_offset(__type) \
 	sbi_scratch_alloc_offset(sizeof(__type))
 
 /** Read a data type from sbi_scratch at given offset */
-#define sbi_scratch_read_type(__scratch, __type, __offset)		\
-({									\
-	*((__type *)sbi_scratch_offset_ptr((__scratch), (__offset)));	\
-})
+#define sbi_scratch_read_type(__scratch, __type, __offset) \
+	({ *((__type *)sbi_scratch_offset_ptr((__scratch), (__offset))); })
 
 /** Write a data type to sbi_scratch at given offset */
-#define sbi_scratch_write_type(__scratch, __type, __offset, __ptr)	\
-do {									\
-	*((__type *)sbi_scratch_offset_ptr((__scratch), (__offset)))	\
-					= (__type)(__ptr);		\
-} while (0)
+#define sbi_scratch_write_type(__scratch, __type, __offset, __ptr)             \
+	do {                                                                   \
+		*((__type *)sbi_scratch_offset_ptr((__scratch), (__offset))) = \
+			(__type)(__ptr);                                       \
+	} while (0)
 
 /** Last HART index having a sbi_scratch pointer */
 extern u32 last_hartindex_having_scratch;
 
 /** Get last HART index having a sbi_scratch pointer */
-#define sbi_scratch_last_hartindex()	last_hartindex_having_scratch
+#define sbi_scratch_last_hartindex() last_hartindex_having_scratch
 
 /** Check whether a particular HART index is valid or not */
 #define sbi_hartindex_valid(__hartindex) \
-(((__hartindex) <= sbi_scratch_last_hartindex()) ? true : false)
+	(((__hartindex) <= sbi_scratch_last_hartindex()) ? true : false)
 
 /** HART index to HART id table */
 extern u32 hartindex_to_hartid_table[];
 
 /** Get sbi_scratch from HART index */
-#define sbi_hartindex_to_hartid(__hartindex)		\
-({							\
-	((__hartindex) <= sbi_scratch_last_hartindex()) ?\
-	hartindex_to_hartid_table[__hartindex] : -1U;	\
-})
+#define sbi_hartindex_to_hartid(__hartindex)                     \
+	({                                                       \
+		((__hartindex) <= sbi_scratch_last_hartindex())  \
+			? hartindex_to_hartid_table[__hartindex] \
+			: -1U;                                   \
+	})
 
 /** HART index to scratch table */
 extern struct sbi_scratch *hartindex_to_scratch_table[];
 
 /** Get sbi_scratch from HART index */
-#define sbi_hartindex_to_scratch(__hartindex)		\
-({							\
-	((__hartindex) <= sbi_scratch_last_hartindex()) ?\
-	hartindex_to_scratch_table[__hartindex] : NULL;\
-})
+#define sbi_hartindex_to_scratch(__hartindex)                     \
+	({                                                        \
+		((__hartindex) <= sbi_scratch_last_hartindex())   \
+			? hartindex_to_scratch_table[__hartindex] \
+			: NULL;                                   \
+	})
 
 /**
  * Get logical index for given HART id
@@ -245,7 +234,7 @@ u32 sbi_hartid_to_hartindex(u32 hartid);
 	sbi_hartindex_to_scratch(sbi_hartid_to_hartindex(__hartid))
 
 /** Check whether particular HART id is valid or not */
-#define sbi_hartid_valid(__hartid)	\
+#define sbi_hartid_valid(__hartid) \
 	sbi_hartindex_valid(sbi_hartid_to_hartindex(__hartid))
 
 #endif

@@ -140,6 +140,10 @@ default_config:
  * FDT is unchanged (or FDT is modified in-place) then fw_platform_init()
  * can always return the original FDT location (i.e. 'arg1') unmodified.
  */
+
+/// @brief Initialize the platform
+/// @param arg1
+/// @return fdt pointer
 unsigned long
 fw_platform_init(unsigned long __attribute__((unused)) arg0 /* 0 hart id */,
 		 unsigned long arg1 /* $fdt */,
@@ -148,10 +152,10 @@ fw_platform_init(unsigned long __attribute__((unused)) arg0 /* 0 hart id */,
 		 unsigned long __attribute__((unused)) arg4 /* 0 */)
 {
 	u32 hartid, hart_count = 0;
-	int rc, root_offset, cpus_offset, cpu_offset, len;
+	int rc, cpus_offset, cpu_offset;
 
 	const void *fdt = (void *)arg1; // fdt
-	root_offset	= fdt_path_offset(fdt, "/");
+	int root_offset = fdt_path_offset(fdt, "/");
 	if (root_offset < 0)
 		goto fail;
 
@@ -160,6 +164,7 @@ fw_platform_init(unsigned long __attribute__((unused)) arg0 /* 0 hart id */,
 	if (generic_plat && generic_plat->fw_init)
 		generic_plat->fw_init(fdt, generic_plat_match);
 
+	int len;
 	const char *model = fdt_getprop(fdt, root_offset, "model", &len);
 	if (model)
 		sbi_strncpy(platform.name, model, sizeof(platform.name) - 1);
@@ -412,6 +417,7 @@ const struct sbi_platform_operations platform_ops = {
 	.vendor_ext_provider	= generic_vendor_ext_provider,
 };
 
+/// @brief 全局变量, 在 fw_platform_init 中被初始化. 下面是默认参数
 struct sbi_platform platform = {
 	.opensbi_version = OPENSBI_VERSION,
 	.platform_version =

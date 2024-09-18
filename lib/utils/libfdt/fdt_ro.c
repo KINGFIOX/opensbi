@@ -247,17 +247,23 @@ int fdt_subnode_offset(const void *fdt, int parentoffset,
 	return fdt_subnode_offset_namelen(fdt, parentoffset, name, strlen(name));
 }
 
+/// @brief 
+/// @param fdt 
+/// @param path 
+/// @param namelen 
+/// @return 
 int fdt_path_offset_namelen(const void *fdt, const char *path, int namelen)
 {
-	const char *end = path + namelen;
-	const char *p = path;
+	const char *end = path + namelen;  // 尾指针
+
 	int offset = 0;
 
-	FDT_RO_PROBE(fdt);
+	FDT_RO_PROBE(fdt);  // 检查是否有问题
 
 	/* see if we have an alias */
+	const char *p = path;
 	if (*path != '/') {
-		const char *q = memchr(path, '/', end - p);
+		const char *q = memchr(path, '/', end - p);  // 查找第一个'/'
 
 		if (!q)
 			q = end;
@@ -392,15 +398,13 @@ const struct fdt_property *fdt_get_property_by_offset(const void *fdt,
 }
 
 static const struct fdt_property *fdt_get_property_namelen_(const void *fdt,
-						            int offset,
+						            int offset, /* */
 						            const char *name,
 						            int namelen,
 							    int *lenp,
 							    int *poffset)
 {
-	for (offset = fdt_first_property_offset(fdt, offset);
-	     (offset >= 0);
-	     (offset = fdt_next_property_offset(fdt, offset))) {
+	for (offset = fdt_first_property_offset(fdt, offset); (offset >= 0); (offset = fdt_next_property_offset(fdt, offset))) {
 		const struct fdt_property *prop;
 
 		prop = fdt_get_property_by_offset_(fdt, offset, lenp);
@@ -418,6 +422,7 @@ static const struct fdt_property *fdt_get_property_namelen_(const void *fdt,
 
 	if (lenp)
 		*lenp = offset;
+
 	return NULL;
 }
 
@@ -448,6 +453,13 @@ const struct fdt_property *fdt_get_property(const void *fdt,
 					strlen(name), lenp);
 }
 
+/// @brief fdt get property by name and length
+/// @param fdt 
+/// @param nodeoffset 
+/// @param name 
+/// @param namelen 
+/// @param lenp 
+/// @return 
 const void *fdt_getprop_namelen(const void *fdt, int nodeoffset,
 				const char *name, int namelen, int *lenp)
 {
@@ -520,12 +532,15 @@ uint32_t fdt_get_phandle(const void *fdt, int nodeoffset)
 	return fdt32_ld_(php);
 }
 
+/// @brief 
+/// @param fdt 
+/// @param name 
+/// @param namelen 
+/// @return 
 const char *fdt_get_alias_namelen(const void *fdt,
 				  const char *name, int namelen)
 {
-	int aliasoffset;
-
-	aliasoffset = fdt_path_offset(fdt, "/aliases");
+	int aliasoffset = fdt_path_offset(fdt, "/aliases");  // 查找 /aliases 节点
 	if (aliasoffset < 0)
 		return NULL;
 

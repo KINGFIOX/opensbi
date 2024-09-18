@@ -52,7 +52,7 @@ _try_lottery:
 	lla                                    a6, _boot_status
 	li                                     a7, BOOT_STATUS_LOTTERY_DONE                                                     # 这是一个标志位
 	amoswap.w                              a6, a7, (a6)
-	bnez                                   a6, _wait_for_boot_hart
+	bnez                                   a6, _wait_for_boot_hart                                                          # 陷入循环(等待 Done)
 
 # 只有一个核心能进来
 	/*                                     relocate the global table content */
@@ -224,8 +224,8 @@ _scratch_init:
 	REG_S                                  a0, SBI_SCRATCH_OPTIONS_OFFSET(tp)
 	MOV_3R                                 a0, s0, a1, s1, a2, s2
 	/*                                     Move to next scratch space */
-	add                                    t1, t1, t2
-	blt                                    t1, s7, _scratch_init
+	addi                                   t1, t1, 1                                                                        # init = 0
+	blt                                    t1, s7, _scratch_init                                                            # 有几个核心, 就初始化几个 scratch
 
 	/*
 	*                                      Relocate Flatened Device Tree (FDT)
@@ -307,7 +307,7 @@ _wait_for_boot_hart:
 	div                                    t2, t2, zero
 	div                                    t2, t2, zero
 	div                                    t2, t2, zero
-	bne                                    t0, t1, _wait_for_boot_hart
+	bne                                    t0, t1, _wait_for_boot_hart                                                      # wait 结束后, 就直接进入 _start_warm
 
 _start_warm:
 	/*                                     Reset all registers except ra, a0, a1, a2, a3 and a4 for non-boot HART */
@@ -318,10 +318,10 @@ _start_warm:
 	csrw                                   CSR_MIE, zero
 
 	/*                                     Find HART count and HART stack size */
-	lla                                    a4, platform
+	lla                                    a4, platform                                                                     # platform 是定义在 platform/generic/platform.c 的全局变量
 #if __riscv_xlen > 32
-	lwu                                    s7, SBI_PLATFORM_HART_COUNT_OFFSET(a4)
-	lwu                                    s8, SBI_PLATFORM_HART_STACK_SIZE_OFFSET(a4)
+	lwu                                    s7, SBI_PLATFORM_HART_COUNT_OFFSET(a4)                                           # platform.hart_count
+	lwu                                    s8, SBI_PLATFORM_HART_STACK_SIZE_OFFSET(a4)                                      # platform.hart_stack_size
 #else
 	lw                                     s7, SBI_PLATFORM_HART_COUNT_OFFSET(a4)
 	lw                                     s8, SBI_PLATFORM_HART_STACK_SIZE_OFFSET(a4)
@@ -329,7 +329,7 @@ _start_warm:
 	REG_L                                  s9, SBI_PLATFORM_HART_INDEX2ID_OFFSET(a4)
 
 	/*                                     Find HART id */
-	csrr                                   s6, CSR_MHARTID
+	csrr                                   s6, CSR_MHARTID                                                                  # mhartid, hardwired
 
 	/*                                     Find HART index */
 	beqz                                   s9, 3f                                                                           # goto 3:
@@ -366,13 +366,13 @@ _start_warm:
 
 	/*                                     Setup trap handler */
 	lla                                    a4, _trap_handler
-	csrr                                   a5, CSR_MISA
-	srli                                   a5, a5, ('H' - 'A')
-	andi                                   a5, a5, 0x1
+	csrr                                   a5, CSR_MISA                                                                     #
+	srli                                   a5, a5, ('H' - 'A')                                                              # 'h' - 'a' = 7
+	andi                                   a5, a5, 0x1                                                                      # >> 7 -> i
 	beq                                    a5, zero, _skip_trap_handler_hyp
-	lla                                    a4, _trap_handler_hyp
+	lla                                    a4, _trap_handler_hyp                                                            # 跳过高位地址 ?
 _skip_trap_handler_hyp:
-	csrw                                   CSR_MTVEC, a4
+	csrw                                   CSR_MTVEC, a4                                                                    # mtvec <- _trap_handler_typ
 
 	/*                                     Initialize SBI runtime */
 	csrr                                   a0, CSR_MSCRATCH
@@ -384,7 +384,8 @@ _skip_trap_handler_hyp:
 	.data
 	.align                                 3
 _boot_status:
-	RISCV_PTR                              0
+# RISCV_PTR 0
+	.dword                                 0
 
 	.section                               .entry, "ax", %progbits
 	.align                                 3

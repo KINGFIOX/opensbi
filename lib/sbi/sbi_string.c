@@ -176,6 +176,11 @@ int sbi_memcmp(const void *s1, const void *s2, size_t count)
 		return 0;
 }
 
+/// @brief 返回第一个 c 的位置
+/// @param s
+/// @param c
+/// @param count
+/// @return
 void *sbi_memchr(const void *s, int c, size_t count)
 {
 	const unsigned char *temp = s;

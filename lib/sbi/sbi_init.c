@@ -498,21 +498,19 @@ static atomic_t coldboot_lottery = ATOMIC_INITIALIZER(0);
  */
 void __noreturn sbi_init(struct sbi_scratch *scratch)
 {
-	u32 i, h;
-	bool hartid_valid		= false;
-	bool next_mode_supported	= false;
-	bool coldboot			= false;
 	u32 hartid			= current_hartid();
 	const struct sbi_platform *plat = sbi_platform_ptr(scratch);
 
-	for (i = 0; i < plat->hart_count; i++) {
-		h = (plat->hart_index2id) ? plat->hart_index2id[i] : i;
+	bool hartid_valid = false;
+	for (u32 i = 0; i < plat->hart_count; i++) {
+		u32 h = (plat->hart_index2id) ? plat->hart_index2id[i] : i;
 		if (h == hartid)
 			hartid_valid = true;
 	}
 	if (!hartid_valid)
 		sbi_hart_hang();
 
+	bool next_mode_supported = false;
 	switch (scratch->next_mode) {
 	case PRV_M:
 		next_mode_supported = true;
@@ -539,6 +537,7 @@ void __noreturn sbi_init(struct sbi_scratch *scratch)
 	 * HARTs which satisfy above condition.
 	 */
 
+	bool coldboot = false;
 	if (sbi_platform_cold_boot_allowed(plat, hartid)) {
 		if (next_mode_supported &&
 		    atomic_xchg(&coldboot_lottery, 1) == 0)
