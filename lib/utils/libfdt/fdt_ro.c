@@ -31,31 +31,34 @@ static int fdt_nodename_eq_(const void *fdt, int offset,
 		return 0;
 }
 
+/// @brief 
+/// @param fdt 
+/// @param stroffset string offset, 这个是相对于 string section 的 offset
+/// @param lenp 返回值, stroffset 的长度
+/// @return 
 const char *fdt_get_string(const void *fdt, int stroffset, int *lenp)
 {
-	int32_t totalsize;
-	uint32_t absoffset;
-	size_t len;
-	int err;
-	const char *s, *n;
 
+	const char * s;
 	if (can_assume(VALID_INPUT)) {
 		s = (const char *)fdt + fdt_off_dt_strings(fdt) + stroffset;
 
 		if (lenp)
 			*lenp = strlen(s);
-		return s;
+		return s;  // 提前返回
 	}
-	totalsize = fdt_ro_probe_(fdt);
-	err = totalsize;
+
+	int32_t totalsize = fdt_ro_probe_(fdt);  // 检测是否正确
+
+	int err = totalsize;
 	if (totalsize < 0)
 		goto fail;
 
 	err = -FDT_ERR_BADOFFSET;
-	absoffset = stroffset + fdt_off_dt_strings(fdt);
+	uint32_t absoffset = stroffset + fdt_off_dt_strings(fdt);
 	if (absoffset >= (unsigned)totalsize)
 		goto fail;
-	len = totalsize - absoffset;
+	size_t len = totalsize - absoffset;  // [ 字符串开头, fdt 结尾 ]
 
 	if (fdt_magic(fdt) == FDT_MAGIC) {
 		if (stroffset < 0)
@@ -72,15 +75,14 @@ const char *fdt_get_string(const void *fdt, int stroffset, int *lenp)
 		if ((stroffset >= 0) ||
 		    (sw_stroffset > fdt_size_dt_strings(fdt)))
 			goto fail;
-		if (sw_stroffset < len)
-			len = sw_stroffset;
+		if (sw_stroffset < len) len = sw_stroffset;
 	} else {
 		err = -FDT_ERR_INTERNAL;
 		goto fail;
 	}
 
 	s = (const char *)fdt + absoffset;
-	n = memchr(s, '\0', len);
+	const char * n = memchr(s, '\0', len);
 	if (!n) {
 		/* missing terminating NULL */
 		err = -FDT_ERR_TRUNCATED;
@@ -102,11 +104,10 @@ const char *fdt_string(const void *fdt, int stroffset)
 	return fdt_get_string(fdt, stroffset, NULL);
 }
 
-static int fdt_string_eq_(const void *fdt, int stroffset,
-			  const char *s, int len)
+static int fdt_string_eq_(const void *fdt, int stroffset, const char *s, int len)
 {
 	int slen;
-	const char *p = fdt_get_string(fdt, stroffset, &slen);
+	const char *p = fdt_get_string(fdt, stroffset, &slen);  // get string
 
 	return p && (slen == len) && (memcmp(p, s, len) == 0);
 }
@@ -303,17 +304,20 @@ int fdt_path_offset(const void *fdt, const char *path)
 	return fdt_path_offset_namelen(fdt, path, strlen(path));
 }
 
+/// @brief get the node's name
+/// @param fdt 
+/// @param nodeoffset the offset of the given node
+/// @param len 
+/// @return 
 const char *fdt_get_name(const void *fdt, int nodeoffset, int *len)
 {
 	const struct fdt_node_header *nh = fdt_offset_ptr_(fdt, nodeoffset);
-	const char *nameptr;
-	int err;
 
-	if (((err = fdt_ro_probe_(fdt)) < 0)
-	    || ((err = fdt_check_node_offset_(fdt, nodeoffset)) < 0))
+	int err;
+	if (((err = fdt_ro_probe_(fdt)) < 0) || ((err = fdt_check_node_offset_(fdt, nodeoffset)) < 0))
 			goto fail;
 
-	nameptr = nh->name;
+	const char * nameptr = nh->name;
 
 	if (!can_assume(LATEST) && fdt_version(fdt) < 0x10) {
 		/*
@@ -464,8 +468,7 @@ const void *fdt_getprop_namelen(const void *fdt, int nodeoffset,
 				const char *name, int namelen, int *lenp)
 {
 	int poffset;
-	const struct fdt_property *	prop = fdt_get_property_namelen_(fdt, nodeoffset, name, namelen, lenp,
-					 &poffset);
+	const struct fdt_property *	prop = fdt_get_property_namelen_(fdt, nodeoffset, name, namelen, lenp, &poffset);
 	if (!prop)
 		return NULL;
 

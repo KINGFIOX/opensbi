@@ -240,8 +240,7 @@ int fdt_next_subnode(const void *fdt, int offset);
 
 /// @brief 获取 FDT 的头部信息
 
-#define fdt_get_header(fdt, field) \
-	(fdt32_ld(&((const struct fdt_header *)(fdt))->field))
+#define fdt_get_header(fdt, field) (fdt32_ld(&((const struct fdt_header *)(fdt))->field))
 #define fdt_magic(fdt)			(fdt_get_header(fdt, magic))
 #define fdt_totalsize(fdt)		(fdt_get_header(fdt, totalsize))
 #define fdt_off_dt_struct(fdt)		(fdt_get_header(fdt, off_dt_struct))

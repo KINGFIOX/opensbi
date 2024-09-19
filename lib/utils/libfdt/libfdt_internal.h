@@ -25,32 +25,42 @@ int fdt_check_prop_offset_(const void *fdt, int offset);
 const char *fdt_find_string_(const char *strtab, int tabsize, const char *s);
 int fdt_node_end_offset_(void *fdt, int nodeoffset);
 
+/// @brief get the addr of the offset of the struct (offset -> ptr)
+/// @param fdt 
+/// @param offset 
+/// @return 
 static inline const void *fdt_offset_ptr_(const void *fdt, int offset)
 {
 	return (const char *)fdt + fdt_off_dt_struct(fdt) + offset;
 }
 
+/// @brief the writable version of fdt_offset_ptr_
+/// @param fdt 
+/// @param offset 
+/// @return 
 static inline void *fdt_offset_ptr_w_(void *fdt, int offset)
 {
+	// 通过强转, 消除 const
 	return (void *)(uintptr_t)fdt_offset_ptr_(fdt, offset);
 }
 
+/// @brief get the ptr of the offset of the reserved memory, and get the n-the entry
 static inline const struct fdt_reserve_entry *fdt_mem_rsv_(const void *fdt, int n)
 {
-	const struct fdt_reserve_entry *rsv_table =
-		(const struct fdt_reserve_entry *)
-		((const char *)fdt + fdt_off_mem_rsvmap(fdt));
+	const struct fdt_reserve_entry *rsv_table = (const struct fdt_reserve_entry *) ((const char *)fdt + fdt_off_mem_rsvmap(fdt));
 
 	return rsv_table + n;
 }
+
+/// @brief 
 static inline struct fdt_reserve_entry *fdt_mem_rsv_w_(void *fdt, int n)
 {
 	return (void *)(uintptr_t)fdt_mem_rsv_(fdt, n);
 }
 
 /*
- * Internal helpers to access tructural elements of the device tree
- * blob (rather than for exaple reading integers from within property
+ * Internal helpers to access structural elements of the device tree
+ * blob (rather than for example reading integers from within property
  * values).  We assume that we are either given a naturally aligned
  * address for the platform or if we are not, we are on a platform
  * where unaligned memory reads will be handled in a graceful manner.
@@ -73,6 +83,7 @@ static inline uint64_t fdt64_ld_(const fdt64_t *p)
 /* Checking controls                                                  */
 /**********************************************************************/
 
+/// 有没有编译选项吧
 #ifndef FDT_ASSUME_MASK
 #define FDT_ASSUME_MASK 0
 #endif

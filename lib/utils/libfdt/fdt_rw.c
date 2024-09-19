@@ -10,18 +10,19 @@
 
 #include "libfdt_internal.h"
 
-static int fdt_blocks_misordered_(const void *fdt,
-				  int mem_rsv_size, int struct_size)
+static int fdt_blocks_misordered_(const void *fdt, int mem_rsv_size, int struct_size)
 {
-	return (fdt_off_mem_rsvmap(fdt) < FDT_ALIGN(sizeof(struct fdt_header), 8))
-		|| (fdt_off_dt_struct(fdt) <
-		    (fdt_off_mem_rsvmap(fdt) + mem_rsv_size))
-		|| (fdt_off_dt_strings(fdt) <
-		    (fdt_off_dt_struct(fdt) + struct_size))
-		|| (fdt_totalsize(fdt) <
-		    (fdt_off_dt_strings(fdt) + fdt_size_dt_strings(fdt)));
+	return (
+		fdt_off_mem_rsvmap(fdt) < FDT_ALIGN(sizeof(struct fdt_header), 8))
+		|| (fdt_off_dt_struct(fdt) < (fdt_off_mem_rsvmap(fdt) + mem_rsv_size))
+		|| (fdt_off_dt_strings(fdt) < (fdt_off_dt_struct(fdt) + struct_size))
+		|| (fdt_totalsize(fdt) < (fdt_off_dt_strings(fdt) + fdt_size_dt_strings(fdt))
+	);
 }
 
+/// @brief check if writable
+/// @param fdt 
+/// @return 
 static int fdt_rw_probe_(void *fdt)
 {
 	if (can_assume(VALID_DTB))
@@ -30,8 +31,7 @@ static int fdt_rw_probe_(void *fdt)
 
 	if (!can_assume(LATEST) && fdt_version(fdt) < 17)
 		return -FDT_ERR_BADVERSION;
-	if (fdt_blocks_misordered_(fdt, sizeof(struct fdt_reserve_entry),
-				   fdt_size_dt_struct(fdt)))
+	if (fdt_blocks_misordered_(fdt, sizeof(struct fdt_reserve_entry), fdt_size_dt_struct(fdt)))
 		return -FDT_ERR_BADLAYOUT;
 	if (!can_assume(LATEST) && fdt_version(fdt) > 17)
 		fdt_set_version(fdt, 17);
@@ -67,8 +67,7 @@ static int fdt_splice_(void *fdt, void *splicepoint, int oldlen, int newlen)
 	return 0;
 }
 
-static int fdt_splice_mem_rsv_(void *fdt, struct fdt_reserve_entry *p,
-			       int oldn, int newn)
+static int fdt_splice_mem_rsv_(void *fdt, struct fdt_reserve_entry *p, int oldn, int newn)
 {
 	int delta = (newn - oldn) * sizeof(*p);
 	int err;
@@ -418,26 +417,30 @@ static void fdt_packblocks_(const char *old, char *new,
 
 int fdt_open_into(const void *fdt, void *buf, int bufsize)
 {
-	int err;
-	int mem_rsv_size, struct_size;
 	int newsize;
 	const char *fdtstart = fdt;
 	const char *fdtend = fdtstart + fdt_totalsize(fdt);
-	char *tmp;
 
 	FDT_RO_PROBE(fdt);
 
-	mem_rsv_size = (fdt_num_mem_rsv(fdt)+1)
-		* sizeof(struct fdt_reserve_entry);
+	int mem_rsv_size = (fdt_num_mem_rsv(fdt)+1) * sizeof(struct fdt_reserve_entry);
 
+	int struct_size;
+	// if (can_assume(LATEST) || fdt_version(fdt) >= 17) {
+	// 	struct_size = fdt_size_dt_struct(fdt);  // 获取 struct 的大小
+	// } else if (fdt_version(fdt) == 16) {
+	// 	struct_size = 0;
+	// 	while (fdt_next_tag(fdt, struct_size, &struct_size) != FDT_END)
+	// 		;
+	// 	if (struct_size < 0)
+	// 		return struct_size;
+	// } else {
+	// 	return -FDT_ERR_BADVERSION;
+	// }
+
+	// 检查版本
 	if (can_assume(LATEST) || fdt_version(fdt) >= 17) {
-		struct_size = fdt_size_dt_struct(fdt);
-	} else if (fdt_version(fdt) == 16) {
-		struct_size = 0;
-		while (fdt_next_tag(fdt, struct_size, &struct_size) != FDT_END)
-			;
-		if (struct_size < 0)
-			return struct_size;
+		struct_size = fdt_size_dt_struct(fdt);  // 获取 struct 的大小
 	} else {
 		return -FDT_ERR_BADVERSION;
 	}
@@ -445,7 +448,7 @@ int fdt_open_into(const void *fdt, void *buf, int bufsize)
 	if (can_assume(LIBFDT_ORDER) ||
 	    !fdt_blocks_misordered_(fdt, mem_rsv_size, struct_size)) {
 		/* no further work necessary */
-		err = fdt_move(fdt, buf, bufsize);
+		int err = fdt_move(fdt, buf, bufsize);
 		if (err)
 			return err;
 		fdt_set_version(buf, 17);
@@ -462,7 +465,7 @@ int fdt_open_into(const void *fdt, void *buf, int bufsize)
 		return -FDT_ERR_NOSPACE;
 
 	/* First attempt to build converted tree at beginning of buffer */
-	tmp = buf;
+	char* tmp = buf;
 	/* But if that overlaps with the old tree... */
 	if (((tmp + newsize) > fdtstart) && (tmp < fdtend)) {
 		/* Try right after the old tree instead */

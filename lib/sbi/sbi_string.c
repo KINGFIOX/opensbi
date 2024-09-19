@@ -40,6 +40,9 @@ int sbi_strncmp(const char *a, const char *b, size_t count)
 	return *a - *b;
 }
 
+/// @brief 不包含最后的 '\0'
+/// @param str
+/// @return
 size_t sbi_strlen(const char *str)
 {
 	unsigned long ret = 0;

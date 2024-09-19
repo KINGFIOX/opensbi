@@ -19,8 +19,7 @@ struct fdt_header {
 	fdt32_t last_comp_version;	 /* last compatible version */
 
 	/* version 2 fields below */
-	fdt32_t boot_cpuid_phys;	 /* Which physical CPU id we're
-					    booting on */
+	fdt32_t boot_cpuid_phys;	 /* Which physical CPU id we're booting on */
 	/* version 3 fields below */
 	fdt32_t size_dt_strings;	 /* size of the strings block */
 
@@ -48,7 +47,7 @@ struct fdt_property {
 #endif /* !__ASSEMBLY */
 
 #define FDT_MAGIC	0xd00dfeed	/* 4: version, 4: total size */
-#define FDT_TAGSIZE	sizeof(fdt32_t)
+#define FDT_TAGSIZE	sizeof(fdt32_t)  // 
 
 #define FDT_BEGIN_NODE	0x1		/* Start node: full name */
 #define FDT_END_NODE	0x2		/* End node */
